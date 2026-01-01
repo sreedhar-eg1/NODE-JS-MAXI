@@ -1,0 +1,10 @@
+Stream
+    Here data is parsed in chunks
+    For example, the data that we are using is too large, such that these data is divided into chunks(smaller parts), so we can work
+    with this smaller part instead of waiting for all the data to be available and perform the operation
+
+Buffer
+    The problem is we can't work directly with chuck. so we need a Buffer
+    Buffer is like a bus stop
+    Means hold multiple chunk and work with them, after we done with work on that chunk, release them and move to the next
+    chunk

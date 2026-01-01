@@ -33,8 +33,27 @@ const server = http.createServer((req, res) => {
   }
 
   if (url === "/message" && method === "POST") {
-    // Writing file synchronously
-    fs.writeFileSync("message.txt", "DUMMY");
+    const body = [];
+
+    // on: we can make use of on method to listen to certain events
+    // data: event emitted when a new chunk of data is available to read
+    req.on("data", (chunk) => {
+      console.log("Chunk received:", chunk);
+      body.push(chunk);
+    });
+
+    // end: event emitted when there is no more data to read
+    req.on("end", () => {
+      // Here we can parse the complete body using Buffer
+      const parsedBody = Buffer.concat(body).toString();
+      console.log(parsedBody);
+
+      // To get the message from the parsed body
+      const message = parsedBody.split("=")[1];
+
+      // Writing file synchronously
+      fs.writeFileSync("message.txt", message);
+    });
 
     // individully setting status code and headers
     res.statusCode = 302;
