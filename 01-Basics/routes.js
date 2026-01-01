@@ -74,7 +74,7 @@ const requestHandler = (req, res) => {
   res.end();
 };
 
-// Two way to export modules
+// three way to export modules
 
 // First way
 module.exports = requestHandler;
@@ -84,3 +84,7 @@ module.exports = requestHandler;
 //   handler: requestHandler,
 //   someText: "Some hard coded text",
 // };
+
+// Third way
+// exports.handler = requestHandler;
+// exports.someText = "Some hard coded text";
