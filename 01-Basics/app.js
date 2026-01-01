@@ -16,9 +16,6 @@ const server = http.createServer((req, res) => {
   // To close the server after response
   //   process.exit();
 
-  //   To set headers to the response
-  res.setHeader("Content-Type", "text/html");
-
   if (url === "/") {
     // Writing response body
     res.write("<html>");
@@ -43,7 +40,7 @@ const server = http.createServer((req, res) => {
     });
 
     // end: event emitted when there is no more data to read
-    req.on("end", () => {
+    return req.on("end", () => {
       // Here we can parse the complete body using Buffer
       const parsedBody = Buffer.concat(body).toString();
       console.log(parsedBody);
@@ -52,18 +49,24 @@ const server = http.createServer((req, res) => {
       const message = parsedBody.split("=")[1];
 
       // Writing file synchronously
-      fs.writeFileSync("message.txt", message);
+      // fs.writeFileSync("message.txt", message);
+
+      // Using asynchronous approach to write file
+      fs.writeFile("message.txt", message, (err) => {
+        // individully setting status code and headers
+        // res.statusCode = 302;
+        // res.setHeader("Location", "/");
+
+        // Alternative approach using writeHead to set statuscode and headers together
+        res.writeHead(302, { Location: "/" });
+
+        return res.end();
+      });
     });
-
-    // individully setting status code and headers
-    res.statusCode = 302;
-    res.setHeader("Location", "/");
-
-    // Alternative approach using writeHead to set statuscode and headers together
-    res.writeHead(302, { Location: "/" });
-
-    return res.end();
   }
+
+  //   To set headers to the response
+  res.setHeader("Content-Type", "text/html");
 
   res.write("<html>");
   res.write("<head><title>My First Page</title><head>");

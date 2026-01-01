@@ -1,0 +1,7 @@
+writeFileSync vs writeFile
+    writeFileSync => Synchronous
+                        This method block code execution until this action or operation is done
+                        Next line of code is only executed after the above operation is done
+
+    writeFile => gives a callback function as third argument
+                 which get run after the operation is done
