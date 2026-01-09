@@ -1,0 +1,23 @@
+To initialize package.json file
+    npm init
+
+    npm init -y => to initialize with default values
+
+-------------------------------------------------------------------------------------------------------------------
+package.json fields
+
+    script => which can be used to write our own scripts
+
+-------------------------------------------------------------------------------------------------------------------
+we can add our own script
+    For ex.,
+        "start": "node app.js"
+
+    Here "start" is a special reserved name in node js, so we execute it without run commond
+        Ex. npm start
+
+    But if we have any other script, which is not a reserved command, then we need to use run command while execiting it
+        "start-server": "node app.js"
+            
+            npm start-server => will not work
+            nom run start-server => will work
