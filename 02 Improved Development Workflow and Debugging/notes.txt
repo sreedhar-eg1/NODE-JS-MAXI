@@ -21,3 +21,11 @@ we can add our own script
             
             npm start-server => will not work
             nom run start-server => will work
+
+-------------------------------------------------------------------------------------------------------------------
+Types of error
+    Syntax error => related to typo or some syntax is wrong
+
+    Runtime error => code which breaks, when that code runs or executed
+
+    Logical error => error that is related to the logic of the code
