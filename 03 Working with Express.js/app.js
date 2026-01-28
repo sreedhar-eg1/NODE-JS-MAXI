@@ -15,5 +15,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(adminRoutes);
 app.use(shopRoutes);
 
+// To handle 404 errors (page not found)
+app.use((req, res, next) => {
+  res.status(404).send("<h1>Page Not Found</h1>");
+})
+
 // Will create an HTTP server and listen on port 3000
 app.listen(3000);
