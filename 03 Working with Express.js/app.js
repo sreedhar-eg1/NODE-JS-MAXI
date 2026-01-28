@@ -27,7 +27,14 @@ app.use("/add-product", (req, res, next) => {
 });
 
 // with use, it will match all HTTP methods (GET, POST, etc.)
-app.use("/product", (req, res, next) => {
+// app.use("/product", (req, res, next) => {
+//   // To getform data
+//   console.log(req.body) // undefined without body-parser or express.json() middleware
+//   res.redirect("/");
+// })
+
+// Filtering out for only post requests
+app.post("/product", (req, res, next) => {
   // To getform data
   console.log(req.body) // undefined without body-parser or express.json() middleware
   res.redirect("/");
