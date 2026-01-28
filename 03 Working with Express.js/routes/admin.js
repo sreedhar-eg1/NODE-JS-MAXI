@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/add-product", (req, res, next) => {
   console.log("add product middleware")
   res.send(
-    '<form action="/product" method="POST"><input type="text" name="title"><button type="submit">Add Product</button></form>',
+    '<form action="/admin/add-product" method="POST"><input type="text" name="title"><button type="submit">Add Product</button></form>',
   );
 });
 
@@ -18,7 +18,7 @@ router.get("/add-product", (req, res, next) => {
 // })
 
 // Filtering out for only post requests
-router.post("/product", (req, res, next) => {
+router.post("/add-product", (req, res, next) => {
   // To getform data
   console.log(req.body) // undefined without body-parser or express.json() middleware
   res.redirect("/");

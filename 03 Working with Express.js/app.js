@@ -12,7 +12,12 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Use all the routes as a middleware
-app.use(adminRoutes);
+// app.use(adminRoutes);
+// app.use(shopRoutes);
+
+// Mounting the admin routes at /admin
+app.use("/admin", adminRoutes);
+// Mounting the shop routes at /
 app.use(shopRoutes);
 
 // To handle 404 errors (page not found)
