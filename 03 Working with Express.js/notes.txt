@@ -1,2 +1,11 @@
 Middleware
     In between request and response middleware exists
+
+path
+    this can be used to create a path
+    path has join method, with the help of this the path can be constructed
+    when constructing path, we need to follow this approach because, in different operating system the slash will be different
+        so this path check our OS and construct the path depending on that
+
+__dirname
+    global variable provided by Node JS, it gives absolute path on our operating system
