@@ -9,3 +9,10 @@ path
 
 __dirname
     global variable provided by Node JS, it gives absolute path on our operating system
+
+
+public folder
+    This folder is accessible publically by everyone
+    If we point the path of this folder in brower url we should be able to see the content
+
+    we can have multiple public folder, but name of the folder should be different

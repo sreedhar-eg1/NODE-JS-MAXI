@@ -2,6 +2,8 @@ const path = require("path");
 
 const express = require("express");
 
+const rootDir = require("../utils/path");
+
 const router = express.Router();
 
 // To add new middleware, use app.use()
@@ -24,7 +26,7 @@ router.get("/", (req, res, next) => {
 
   //   To send a HTML file as a response
   console.log(__dirname); // logs the directory of the current module
-  res.sendFile(path.join(__dirname, "../", "views", "shop.html"));
+  res.sendFile(path.join(rootDir, "views", "shop.html"));
 });
 
 module.exports = router;
