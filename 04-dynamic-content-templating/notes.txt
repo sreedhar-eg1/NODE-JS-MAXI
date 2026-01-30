@@ -1,0 +1,12 @@
+If we add any variable in any of the file and assign some value to it
+Then that value will be available to all users
+
+------------------------------------------------------------------------------------------------------
+Templating Engine
+    If we want to insert some dynamic content into HTML template then we can use Templating Engine
+    There are different types of template Engine
+        ex: EJS, Pug(Jade), HandleBars
+
+------------------------------------------------------------------------------------------------------
+.set()
+    To set any value globally and can read it by the help of .get() method
