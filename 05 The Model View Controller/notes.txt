@@ -1,0 +1,16 @@
+MVC => Models Views Controllers
+
+Models:
+     Represent your data in your code
+     Work with your data, ex: save, fetch...
+
+Views:
+    What the users sees
+
+Controllers:
+    Connecting yours models and your views
+    Contains the in-between logic
+
+Routes
+    It is also a part of Controller
+    For which path which controller need to execute
