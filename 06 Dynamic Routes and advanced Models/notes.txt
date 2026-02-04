@@ -1,0 +1,12 @@
+req.params.anydynamicValue
+    we can access any dynamic balue mentioned in the the route using req.params
+    Here the name of the anydynamicValue must be same as the name mentioned in the route
+
+-------------------------------------------------------------------------------------------------------
+
+<%- include('../includes/add-to-cart.ejs', {product: product}) %>
+    To pass data to the commanly shared template file
+
+-------------------------------------------------------------------------------------------------------
+req.query.keyName
+    This can be used to get the query params data
