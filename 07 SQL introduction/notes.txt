@@ -1,0 +1,31 @@
+Two ways to scale our databases
+    Horizontal scaling and Vertical scaling
+
+Horizontal scaling
+    Here we add more servers (and merge data into one databases)
+    It is not easy to implement, because data will be split into different server and we need some logic to apply query on all the server
+
+Vertical scaling
+    Improve existing server capacity
+
+-----------------------------------------------------------------------------------------------------------------
+SQL
+    Data uses schemas
+    Relations
+    Data is distributed across multiple tables
+    Horizontal scaling is difficult/imposible
+    Vertical scaling is possible
+    Limitations for a lots of (thousands) of read and write queries per second
+
+NoSQL
+    Schemaless
+    No or very few Relations
+    Data is typically merged or nested in a few colllections
+    Both Horizontal and Vertical scaling is possible
+    great performace for mass read and write requests
+
+-----------------------------------------------------------------------------------------------------------------
+// 'execute' method is used for executing SQL queries with prepared statements
+db.execute("SELECT * FROM products")
+  .then((products) => console.log(products))
+  .catch((err) => console.log(err));
