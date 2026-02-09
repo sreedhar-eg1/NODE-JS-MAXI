@@ -14,10 +14,16 @@ exports.postAddProduct = (req, res, next) => {
   const description = req.body.description;
   const price = req.body.price;
 
-  const newProduct = new Product(null, title, imageUrl, description, price);
-  newProduct
-    .save()
-    .then(() => res.redirect("/"))
+  // This is how we create a new product using Sequelize. We call the create method on the Product model and pass in an object
+  // with the properties that we want to set for the new product. The create method returns a promise, so we can chain a
+  // .then() to it to handle the result of the creation.
+  Product.create({
+    title: title,
+    price: price,
+    imageUrl: imageUrl,
+    description: description,
+  })
+    .then((result) => res.redirect("/"))
     .catch((err) => console.log(err));
 };
 
