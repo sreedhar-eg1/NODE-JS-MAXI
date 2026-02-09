@@ -1,0 +1,3 @@
+What is sequelize
+    third-party package
+    An Object-Relational mapping library
