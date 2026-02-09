@@ -3,6 +3,8 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 
+const sequelize = require("./util/database");
+
 const errorController = require("./controllers/errors");
 
 const adminRoutes = require("./routes/admin");
@@ -21,4 +23,13 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-app.listen(3000);
+// It basically creates the tables in the database if they don't exist and syncs
+// the models with the database. It returns a promise, so we can chain a .then()
+// to it to start the server after the database is synced.
+sequelize
+  .sync()
+  .then((result) => {
+    // console.log(result)
+    app.listen(3000);
+  })
+  .catch((err) => console.log(err)); // Sync the models with the database
