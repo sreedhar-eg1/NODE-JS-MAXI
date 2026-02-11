@@ -14,17 +14,29 @@ exports.postAddProduct = (req, res, next) => {
   const description = req.body.description;
   const price = req.body.price;
 
+  // When we setup the relation, we will get some method, using that we can create
+  req.user
+    .createProduct({
+      title: title,
+      price: price,
+      imageUrl: imageUrl,
+      description: description,
+    })
+    .then(() => res.redirect("/"))
+    .catch((err) => console.log(err));
+
   // This is how we create a new product using Sequelize. We call the create method on the Product model and pass in an object
   // with the properties that we want to set for the new product. The create method returns a promise, so we can chain a
   // .then() to it to handle the result of the creation.
-  Product.create({
-    title: title,
-    price: price,
-    imageUrl: imageUrl,
-    description: description,
-  })
-    .then(() => res.redirect("/"))
-    .catch((err) => console.log(err));
+  // Product.create({
+  //   title: title,
+  //   price: price,
+  //   imageUrl: imageUrl,
+  //   description: description,
+  //   userId: req.user.id
+  // })
+  //   .then(() => res.redirect("/"))
+  //   .catch((err) => console.log(err));
 };
 
 exports.getEditProduct = (req, res, next) => {
@@ -35,8 +47,12 @@ exports.getEditProduct = (req, res, next) => {
     return res.redirect("/");
   }
 
-  Product.findByPk(prodId)
-    .then((product) => {
+  req.user
+    .getProducts({ where: { id: prodId } })
+    // Product.findByPk(prodId)
+    .then((products) => {
+      const product = products[0];
+
       if (!product) {
         return res.redirect("/");
       }
@@ -72,7 +88,8 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.findAll()
+  req.user
+    .getProducts()
     .then((products) => {
       res.render("admin/products", {
         products: products,
@@ -81,6 +98,15 @@ exports.getProducts = (req, res, next) => {
       });
     })
     .catch((err) => console.log(err));
+  // Product.findAll()
+  //   .then((products) => {
+  //     res.render("admin/products", {
+  //       products: products,
+  //       pageTitle: "Admin Products",
+  //       path: "/admin/products",
+  //     });
+  //   })
+  //   .catch((err) => console.log(err));
 };
 
 exports.postDeleteProduct = (req, res, next) => {
