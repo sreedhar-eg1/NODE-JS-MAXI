@@ -8,6 +8,8 @@ const Product = require("./models/product");
 const User = require("./models/user");
 const Cart = require("./models/cart");
 const CartItem = require("./models/cart-item");
+const Order = require("./models/order");
+const OrderItem = require("./models/order-item");
 
 const errorController = require("./controllers/errors");
 
@@ -43,12 +45,15 @@ User.hasOne(Cart);
 Cart.belongsTo(User);
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product, { through: OrderItem });
 
 // It basically creates the tables in the database if they don't exist and syncs
 // the models with the database. It returns a promise, so we can chain a .then()
 // to it to start the server after the database is synced.
 sequelize
-  // .sync({force: true}) // will clear the data in the database, not recommended to use
+  // .sync({force: true}) // will clear the data in the database all the time, not recommended to use
   .sync()
   .then((_) => {
     return User.findByPk(1);
