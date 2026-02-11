@@ -1,0 +1,5 @@
+What is sequelize
+    third-party package
+    An Object-Relational mapping library
+
+    For this to work mysql2 package is also required
