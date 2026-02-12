@@ -18,3 +18,6 @@ In mongoDb, id is stored in some different format
     so to compare the id, we need to create a new objectId which is got from the mongoDb
     const mongodb = require('mongodb')
     new mongodb.ObjectId('any_id') 
+
+while updating the document using updateOne or insertMany
+    we need to use the keyword $set to replace the existing document
