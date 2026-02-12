@@ -1,2 +1,20 @@
 MongoDB
     can store lots and lots of data
+
+.insertOne()
+    To insert a single documents
+
+.insertMany()
+    To insert multiple documents
+
+.find()
+    without anything inside find() method it returns everything
+    but to get all documents at once we need to use .toArray() 
+
+.next()
+    It will give the last element as an array
+
+In mongoDb, id is stored in some different format
+    so to compare the id, we need to create a new objectId which is got from the mongoDb
+    const mongodb = require('mongodb')
+    new mongodb.ObjectId('any_id') 

@@ -7,7 +7,7 @@ let _db; //here _db means, a standard to indicate that this variable will be use
 
 const mongoConnect = (callback) => {
   MongoClient.connect(
-    "mongodb+srv://sreedhareg1997_db_user:eT6lQe9C74f65Jpq@node-complete.ra50bsw.mongodb.net/shop",
+    "mongodb+srv://sreedhareg1997_db_user:eT6lQe9C74f65Jpq@node-complete.ra50bsw.mongodb.net/Shop",
   )
     .then((client) => {
       console.log("CONNECTED");
@@ -16,17 +16,17 @@ const mongoConnect = (callback) => {
     })
     .catch((err) => {
       console.log(err);
-      throw err
+      throw err;
     });
 };
 
 const getDb = () => {
-  if(_db) {
-    return _db
+  if (_db) {
+    return _db;
   }
 
-  throw 'No database found!'
-}
+  throw "No database found!";
+};
 
-exports.mongoConnect = mongoConnect
-exports.getDb = getDb
+exports.mongoConnect = mongoConnect;
+exports.getDb = getDb;

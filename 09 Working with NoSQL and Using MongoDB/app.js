@@ -8,7 +8,7 @@ const { mongoConnect } = require("./util/database");
 const errorController = require("./controllers/errors");
 
 const adminRoutes = require("./routes/admin");
-// const shopRoutes = require("./routes/shop");
+const shopRoutes = require("./routes/shop");
 
 const app = express();
 
@@ -25,13 +25,15 @@ app.use((req, res, next) => {
   //     next();
   //   })
   //   .catch((err) => console.log(err));
+  next();
 });
 
 app.use("/admin", adminRoutes);
-// app.use(shopRoutes);
+app.use(shopRoutes);
 
 app.use(errorController.get404);
 
 mongoConnect(() => {
+  console.log("LISTENING TO 3000");
   app.listen(3000);
 });
