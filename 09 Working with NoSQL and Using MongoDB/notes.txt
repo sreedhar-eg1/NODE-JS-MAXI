@@ -13,6 +13,10 @@ MongoDB
 
 .next()
     It will give the last element as an array
+    In some cases while fetching documents all elements will not be returned at once, instead a cursor will be returned
+    so by navigating the cursor the prodict get loaded
+
+    so if only one element is needed then next() can be used otherwise we can use toArray()
 
 In mongoDb, id is stored in some different format
     so to compare the id, we need to create a new objectId which is got from the mongoDb
