@@ -5,3 +5,9 @@ Core concepts
     We use schemas and models
     we have instances, which is used to instantiate the model
     Based on that instances we can run our queries
+
+.save()
+    To save a document into a database
+
+.find()
+    To get all the documents
