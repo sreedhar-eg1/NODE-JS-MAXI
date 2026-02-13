@@ -1,3 +1,4 @@
+const product = require("../models/product");
 const Product = require("../models/product");
 
 exports.getAddProduct = (req, res, next) => {
@@ -52,16 +53,15 @@ exports.postEditProduct = (req, res, next) => {
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
 
-  const updateProduct = new Product(
-    updatedTitle,
-    updatedPrice,
-    updatedImageUrl,
-    updatedDescription,
-    prodId,
-    req.user._id,
-  );
-  updateProduct
-    .save()
+  Product.findById(prodId)
+    .then((product) => {
+      product.title = updatedTitle;
+      product.price = updatedPrice;
+      product.imageurl = updatedImageUrl;
+      product.description = updatedDescription;
+
+      return product.save();
+    })
     .then(res.redirect("/admin/products"))
     .catch((err) => console.log(err));
 };
