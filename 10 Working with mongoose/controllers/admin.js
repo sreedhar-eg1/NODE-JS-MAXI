@@ -1,5 +1,3 @@
-const { ObjectId } = require("mongodb");
-
 const Product = require("../models/product");
 
 exports.getAddProduct = (req, res, next) => {
@@ -16,16 +14,9 @@ exports.postAddProduct = (req, res, next) => {
   const description = req.body.description;
   const price = req.body.price;
 
-  const newProduct = new Product(
-    title,
-    price,
-    imageUrl,
-    description,
-    null,
-    req.user._id,
-  );
+  const newProduct = new Product({ title, price, imageUrl, description });
   newProduct
-    .save()
+    .save() // this save method is coming from the mongoose model
     .then(() => res.redirect("/admin/products"))
     .catch((err) => console.log(err));
 };
