@@ -1,0 +1,7 @@
+Mongoose
+    A Object Document Mapping library
+
+Core concepts
+    We use schemas and models
+    we have instances, which is used to instantiate the model
+    Based on that instances we can run our queries
