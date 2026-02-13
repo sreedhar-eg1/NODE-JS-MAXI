@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 
 const { getDb } = require("../util/database");
+const { name } = require("ejs");
 
 class User {
   constructor(username, email, cart, id) {
@@ -76,7 +77,45 @@ class User {
 
     return db
       .collection("users")
-      .updateOne({ _id: this._id }, { $set: { cart: { items: updatedCartItems } } });
+      .updateOne(
+        { _id: this._id },
+        { $set: { cart: { items: updatedCartItems } } },
+      );
+  }
+
+  addOrder() {
+    const db = getDb();
+
+    return this.getCart()
+      .then((products) => {
+        const order = {
+          items: products,
+          user: {
+            _id: new ObjectId(this._id),
+            name: this.username,
+          },
+        };
+
+        return db.collection("orders").insertOne(order);
+      })
+      .then(() => {
+        this.cart = { items: [] };
+        return db
+          .collection("users")
+          .updateOne(
+            { _id: new ObjectId(this._id) },
+            { $set: { cart: { items: [] } } },
+          );
+      });
+  }
+
+  getOrders() {
+    const db = getDb();
+
+    return db
+      .collection("orders")
+      .find({ "user._id": new ObjectId(this._id) })
+      .toArray()
   }
 
   static findById(userId) {

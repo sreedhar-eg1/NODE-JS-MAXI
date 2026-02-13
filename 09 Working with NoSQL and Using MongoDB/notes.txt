@@ -25,3 +25,6 @@ In mongoDb, id is stored in some different format
 
 while updating the document using updateOne or insertMany
     we need to use the keyword $set to replace the existing document
+
+If we want to compare the nested object then we need to use quaote along with its path
+    .find({ "user._id": new ObjectId(this._id) })
