@@ -11,3 +11,17 @@ Core concepts
 
 .find()
     To get all the documents
+
+.populate()
+    Tells mongoose to populate certain field with all the details
+
+    populate("userId", "name")
+        populate details based on userId field and fetch only name field information from that
+
+.select() 
+    To select some field out of many fields while fetching information
+    .select("title price -_id")
+    Here include tilte and price and exclude _id
+    To exclude we prepend it with -(minus)
+
+    The same thing can be done inside populate also
