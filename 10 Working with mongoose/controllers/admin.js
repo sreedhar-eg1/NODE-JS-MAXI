@@ -15,7 +15,8 @@ exports.postAddProduct = (req, res, next) => {
   const description = req.body.description;
   const price = req.body.price;
 
-  const newProduct = new Product({ title, price, imageUrl, description });
+  // req.user => if we pass req.user, even though it need userId, mongoose choose the id from the model
+  const newProduct = new Product({ title, price, imageUrl, description, userId: req.user });
   newProduct
     .save() // this save method is coming from the mongoose model
     .then(() => res.redirect("/admin/products"))
