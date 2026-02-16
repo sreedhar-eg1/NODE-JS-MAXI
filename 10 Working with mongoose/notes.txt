@@ -18,6 +18,11 @@ Core concepts
     populate("userId", "name")
         populate details based on userId field and fetch only name field information from that
 
+.execPopulate()
+    To execute a query defined inside populate and return a promise
+    It should be appended after the populate method
+    For older version of mongoose it required, for newer version it is not neccessary
+
 .select() 
     To select some field out of many fields while fetching information
     .select("title price -_id")
