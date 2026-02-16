@@ -30,3 +30,7 @@ Core concepts
     To exclude we prepend it with -(minus)
 
     The same thing can be done inside populate also
+
+._doc
+    TO get the entire document based on _id
+    Ex. item.productId._doc
