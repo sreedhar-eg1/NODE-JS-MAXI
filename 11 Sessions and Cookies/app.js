@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session); // connect session details with mongoDB
 
 const User = require("./models/user");
 
@@ -13,7 +14,15 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 
+const MONGODB_URI =
+  "mongodb+srv://sreedhareg1997_db_user:eT6lQe9C74f65Jpq@node-complete.ra50bsw.mongodb.net/Shop";
+
 const app = express();
+
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: "sessions",
+});
 
 app.set("view engine", "ejs"); // Set EJS as the templating engine
 app.set("views", "views"); // Specify the views directory
@@ -25,7 +34,8 @@ app.use(
   session({
     secret: "Node Complete",
     resave: false, // will not save seesion details on each request
-    saveUninitialized: false
+    saveUninitialized: false,
+    store: store, // To add mongodb store with sessions
   }),
 );
 
@@ -45,9 +55,7 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 mongoose
-  .connect(
-    "mongodb+srv://sreedhareg1997_db_user:eT6lQe9C74f65Jpq@node-complete.ra50bsw.mongodb.net/Shop",
-  )
+  .connect(MONGODB_URI)
   .then(() => {
     User.findOne().then((user) => {
       if (!user) {
