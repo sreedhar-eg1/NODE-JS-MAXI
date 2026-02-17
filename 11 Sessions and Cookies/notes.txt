@@ -1,0 +1,8 @@
+With cookie we can store data in browser which is customized for that particular user only
+
+we can set a cookie just by setting a header, with header name as 'Set-Cookie'
+and the value for that header can be any key-value pair
+         res.setHeader('Set-Cookie', 'loggedIn=true')
+
+To get the Cookie information
+    req.get('Cookie')
