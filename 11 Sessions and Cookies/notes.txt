@@ -13,3 +13,4 @@ One disadvantage of using cookie is, we can manipulate or change its value in th
 
 session
     Cookie will store information in the Client where as the sessions is stored in the server
+    To use session we need to use 3rd party package "npm i express-session"

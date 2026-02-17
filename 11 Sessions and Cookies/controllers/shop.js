@@ -8,7 +8,7 @@ exports.getProducts = (req, res, next) => {
         pageTitle: "Shop",
         products: products,
         path: "/products",
-        isAuthenticated: isLoggedIn,
+        isAuthenticated: req.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
@@ -23,7 +23,7 @@ exports.getProduct = (req, res, next) => {
         pageTitle: product.title,
         path: "/products",
         product: product,
-        isAuthenticated: isLoggedIn,
+        isAuthenticated: req.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
@@ -36,7 +36,7 @@ exports.getIndex = (req, res, next) => {
         pageTitle: "Index",
         products: products,
         path: "/",
-        isAuthenticated: isLoggedIn,
+        isAuthenticated: req.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
@@ -51,7 +51,7 @@ exports.getCart = (req, res, next) => {
         pageTitle: "Your Cart",
         path: "/cart",
         products: products,
-        isAuthenticated: isLoggedIn,
+        isAuthenticated: req.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
@@ -110,7 +110,7 @@ exports.getOrders = (req, res, next) => {
         pageTitle: "Your Orders",
         path: "/orders",
         orders: orders,
-        isAuthenticated: isLoggedIn,
+        isAuthenticated: req.isLoggedIn,
       }),
     )
     .catch((err) => console.log(err));
