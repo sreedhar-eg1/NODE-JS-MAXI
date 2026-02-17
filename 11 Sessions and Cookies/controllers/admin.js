@@ -6,7 +6,7 @@ exports.getAddProduct = (req, res, next) => {
     pageTitle: "Add Product",
     path: "/admin/add-product",
     editing: false,
-    isAuthenticated: req.isLoggedIn,
+    isAuthenticated: req.session.isLoggedIn,
   });
 };
 
@@ -16,13 +16,12 @@ exports.postAddProduct = (req, res, next) => {
   const description = req.body.description;
   const price = req.body.price;
 
-  // req.user => if we pass req.user, even though it need userId, mongoose choose the id from the model
   const newProduct = new Product({
     title,
     price,
     imageUrl,
     description,
-    userId: req.user,
+    userId: req.session.user,
   });
   newProduct
     .save() // this save method is coming from the mongoose model
@@ -49,7 +48,7 @@ exports.getEditProduct = (req, res, next) => {
         path: "/edit/add-product",
         editing: edit,
         product: product,
-        isAuthenticated: req.isLoggedIn,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
@@ -84,7 +83,7 @@ exports.getProducts = (req, res, next) => {
         products: products,
         pageTitle: "Admin Products",
         path: "/admin/products",
-        isAuthenticated: req.isLoggedIn,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
