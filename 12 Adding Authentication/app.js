@@ -61,17 +61,6 @@ app.use(errorController.get404);
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
-    User.findOne().then((user) => {
-      if (!user) {
-        const user = new User({
-          name: "test",
-          email: "test@test.com",
-          cart: { items: [] },
-        });
-        user.save();
-      }
-    });
-
     console.log("CONNECTED AND LISTENING TO PORT 3000");
     app.listen(3000);
   })

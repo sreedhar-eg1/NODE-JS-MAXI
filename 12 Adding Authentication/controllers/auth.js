@@ -18,10 +18,10 @@ exports.getLogin = (req, res, next) => {
 
 exports.getSignup = (req, res, next) => {
   res.render("auth/signup", {
-    path: '/signup',
-    pageTitle: 'Signup',
-    isAuthenticated: false
-  })
+    path: "/signup",
+    pageTitle: "Signup",
+    isAuthenticated: false,
+  });
 };
 
 exports.postLogin = (req, res, next) => {
@@ -44,7 +44,23 @@ exports.postLogin = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
-exports.postSignup = (req, res, next) => {};
+exports.postSignup = (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const confirmPassword = req.body.confirmPassword;
+
+  User.findOne({ email: email })
+    .then((userDoc) => {
+      if (userDoc) {
+        return res.redirect("/signup");
+      }
+
+      const newUser = new User({ email, password, cart: { items: [] } });
+      return newUser.save();
+    })
+    .then(res.redirect("/login"))
+    .catch((err) => console.log(err));
+};
 
 exports.postLogout = (req, res, next) => {
   // deleting the session
