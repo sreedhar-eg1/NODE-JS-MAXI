@@ -16,6 +16,14 @@ exports.getLogin = (req, res, next) => {
   });
 };
 
+exports.getSignup = (req, res, next) => {
+  res.render("auth/signup", {
+    path: '/signup',
+    pageTitle: 'Signup',
+    isAuthenticated: false
+  })
+};
+
 exports.postLogin = (req, res, next) => {
   req.isLoggedIn = true;
 
@@ -28,13 +36,15 @@ exports.postLogin = (req, res, next) => {
       };
       req.session.isLoggedIn = true; // setting session value using session property
       // res.setHeader("Set-Cookie", "loggedIn=true");
-      req.session.save(err => {
-        console.log(err)
-        res.redirect("/")
+      req.session.save((err) => {
+        console.log(err);
+        res.redirect("/");
       }); // to make sure session is saved to the database, after that execute the next line
     })
     .catch((err) => console.log(err));
 };
+
+exports.postSignup = (req, res, next) => {};
 
 exports.postLogout = (req, res, next) => {
   // deleting the session
