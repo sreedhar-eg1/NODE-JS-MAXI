@@ -1,0 +1,2 @@
+While storing password we need to encrypt the password
+    we can achieve this with a package "npm i bcryptjs"
