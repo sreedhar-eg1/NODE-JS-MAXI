@@ -25,11 +25,13 @@ exports.postLogin = (req, res, next) => {
         _id: user._id.toString(),
         name: user.name,
         email: user.email,
-        cart: user.cart,
       };
       req.session.isLoggedIn = true; // setting session value using session property
       // res.setHeader("Set-Cookie", "loggedIn=true");
-      res.redirect("/");
+      req.session.save(err => {
+        console.log(err)
+        res.redirect("/")
+      }); // to make sure session is saved to the database, after that execute the next line
     })
     .catch((err) => console.log(err));
 };
