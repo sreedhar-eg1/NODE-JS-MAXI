@@ -17,3 +17,5 @@ session
 
 There are many ways to store session details
     here we are using "npm i connect-mongodb-session"
+
+To clear or delete a session we can call destroy() method provided by session
