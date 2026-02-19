@@ -14,6 +14,7 @@ exports.getSignup = (req, res, next) => {
   res.render("auth/signup", {
     path: "/signup",
     pageTitle: "Signup",
+    errorMessage: req.flash("error")
   });
 };
 
@@ -33,6 +34,7 @@ exports.postLogin = (req, res, next) => {
         .compare(password, user.password)
         .then((domatch) => {
           if (!domatch) {
+            req.flash("error", "Invalid email or password.")
             return res.redirect("/login");
           }
 
@@ -66,6 +68,7 @@ exports.postSignup = (req, res, next) => {
     .then((userDoc) => {
       console.log(userDoc);
       if (userDoc) {
+        req.flash("error", "E-mail exists already. Please pick a different one.")
         return res.redirect("/signup");
       }
 
