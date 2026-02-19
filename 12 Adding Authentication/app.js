@@ -5,6 +5,9 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session); // connect session details with mongoDB
+const cookieParser = require("cookie-parser"); // cookieParser is required while using csrf-csrf dependency
+
+const { generateCsrfToken } = require("./middleware/csrf");
 
 const User = require("./models/user");
 
@@ -29,6 +32,7 @@ app.set("views", "views"); // Specify the views directory
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(cookieParser());
 app.use(
   // registering session
   session({
@@ -50,6 +54,12 @@ app.use((req, res, next) => {
       next();
     })
     .catch((err) => console.log(err));
+});
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = generateCsrfToken(req, res); // available in all views with the help of locals field
+  next();
 });
 
 app.use("/admin", adminRoutes);

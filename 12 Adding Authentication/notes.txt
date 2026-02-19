@@ -2,3 +2,16 @@ While storing password we need to encrypt the password
     we can achieve this with a package "npm i bcryptjs"
 
     the password encrypted using this dependency cannot be decrypted
+
+CSRF Attacks
+    CSRF => Cross-Site Request Forgery
+    User is tricked to another site instead of using the actual site
+    To avoid this we need to use CSRF token
+
+    we can use dependency for this "npm i csrf-csrf"
+
+We can add some information to the every rendered view
+    that is using special field provided by the express js
+        that special field is "locals"
+
+we need to add csrf token to all the post route to make sure that our session is not stolen
