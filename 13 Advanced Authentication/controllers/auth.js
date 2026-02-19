@@ -1,3 +1,5 @@
+const crypto = require("crypto");
+
 const bcrypt = require("bcryptjs");
 
 const User = require("../models/user");
@@ -6,7 +8,7 @@ exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
-    errorMessage: req.flash("error")
+    errorMessage: req.flash("error"),
   });
 };
 
@@ -14,7 +16,7 @@ exports.getSignup = (req, res, next) => {
   res.render("auth/signup", {
     path: "/signup",
     pageTitle: "Signup",
-    errorMessage: req.flash("error")
+    errorMessage: req.flash("error"),
   });
 };
 
@@ -25,7 +27,7 @@ exports.postLogin = (req, res, next) => {
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
-        req.flash("error", "Invalid email or password.")
+        req.flash("error", "Invalid email or password.");
         return res.redirect("/login");
       }
 
@@ -34,7 +36,7 @@ exports.postLogin = (req, res, next) => {
         .compare(password, user.password)
         .then((domatch) => {
           if (!domatch) {
-            req.flash("error", "Invalid email or password.")
+            req.flash("error", "Invalid email or password.");
             return res.redirect("/login");
           }
 
@@ -68,7 +70,10 @@ exports.postSignup = (req, res, next) => {
     .then((userDoc) => {
       console.log(userDoc);
       if (userDoc) {
-        req.flash("error", "E-mail exists already. Please pick a different one.")
+        req.flash(
+          "error",
+          "E-mail exists already. Please pick a different one.",
+        );
         return res.redirect("/signup");
       }
 
@@ -86,6 +91,48 @@ exports.postSignup = (req, res, next) => {
         .catch((err) => console.log(err));
     })
     .catch((err) => console.log(err));
+};
+
+exports.getReset = (req, res, next) => {
+  res.render("auth/reset", {
+    path: "/reset",
+    pageTitle: "Reset Password",
+    errorMessage: req.flash("error"),
+  });
+};
+
+exports.postReset = (req, res, next) => {
+  const email = req.body.email;
+
+  crypto.randomBytes(32, (err, buf) => {
+    if (err) {
+      console.log(err);
+      return res.redirect("/reset");
+    }
+
+    const token = buf.toString("hex");
+    console.log(`${buf.length} bytes of random data: ${buf.toString("hex")}`);
+
+    User.findOne({ email: email })
+      .then((user) => {
+        if (!user) {
+          req.flash("error", "No account with that email found.");
+          return res.redirect("/reset");
+        }
+
+        user.resetToken = token;
+        user.resetTokenExpiration = Date.now() + 3600000;
+
+        return user.save();
+      })
+      .then(() => {
+        console.log("Reset password mail sent.")
+        res.redirect(`/reset/${token}`)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
 };
 
 exports.postLogout = (req, res, next) => {

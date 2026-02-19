@@ -1,2 +1,2 @@
-How does sending email works?
-    we use 3rd party package to send mails
+Node JS has built in crypto package
+    Using this we can generate unique token (secure unique random value)
