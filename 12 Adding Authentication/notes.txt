@@ -15,3 +15,5 @@ We can add some information to the every rendered view
         that special field is "locals"
 
 we need to add csrf token to all the post route to make sure that our session is not stolen
+
+If we want to make use of session to display flash message then we can use "npm i connect-flash" package

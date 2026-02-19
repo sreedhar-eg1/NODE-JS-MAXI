@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session); // connect session details with mongoDB
 const cookieParser = require("cookie-parser"); // cookieParser is required while using csrf-csrf dependency
+const flash = require('connect-flash') // To show flash message with the help of sessions
 
 const { generateCsrfToken } = require("./middleware/csrf");
 
@@ -42,6 +43,7 @@ app.use(
     store: store, // To add mongodb store with sessions
   }),
 );
+app.use(flash()) // registering flash, so we can use it anywhere across our application
 
 app.use((req, res, next) => {
   if (!req.session.user) {
