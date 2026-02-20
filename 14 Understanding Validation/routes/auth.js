@@ -11,7 +11,21 @@ router.get("/signup", authController.getSignup);
 
 router.post("/login", authController.postLogin);
 
-router.post("/signup", check("email").isEmail(), authController.postSignup);
+router.post(
+  "/signup",
+  check("email")
+    .isEmail()
+    .withMessage("Please enter a vaild email")
+    // custom vaildation
+    .custom((value, { req }) => {
+      //   if (value === "test@test.com") {
+      //     throw new Error("This email is forbidden");
+      //   }
+
+      return true;
+    }),
+  authController.postSignup,
+);
 
 router.get("/reset", authController.getReset);
 
