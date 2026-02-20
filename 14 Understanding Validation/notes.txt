@@ -1,1 +1,7 @@
 For validation we can use 3rd party package "npm i express-validator"
+
+check("email")
+    it look for this email field from anywhere within the request
+    It can be from body, params, query, headers...
+
+    we can look it from only body , then we can use body('email)
