@@ -175,22 +175,27 @@ exports.postNewPassword = (req, res, next) => {
     resetTokenExpiration: { $gt: Date.now() },
   })
     .then((user) => {
+      resetUser = user;
+
       if (!user) {
         req.flash("error", "Failed to fetch user. Please try again later");
         return res.redirect("/login");
       }
-      resetUser = user;
 
-      return bcrypt.hash(newPassword, 12);
-    })
-    .then((hashedPasssword) => {
-      resetUser.password = hashedPasssword;
-      resetUser.resetToken = undefined;
-      resetUser.resetTokenExpiration = undefined;
+      return bcrypt
+        .hash(newPassword, 12)
+        .then((hashedPasssword) => {
+          resetUser.password = hashedPasssword;
+          resetUser.resetToken = undefined;
+          resetUser.resetTokenExpiration = undefined;
 
-      return resetUser.save();
+          return resetUser
+            .save()
+            .then(() => res.redirect("/login"))
+            .catch((err) => console.log(err));
+        })
+        .catch((err) => console.log(err));
     })
-    .then(() => res.redirect("/login"))
     .catch((err) => console.log(err));
 };
 
