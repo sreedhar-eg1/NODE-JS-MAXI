@@ -1,0 +1,15 @@
+Different types of error
+    Technical/Network error
+        Ex. MongoDB server may be down
+    Expected error
+        Ex. File cant be read, database operation fails
+    Bugs/Logical error
+        Ex. User object used when it doesnot exist
+
+Working with errors
+    For synchronous code
+        try-catch
+    For asynchronous code
+        then()-catch()
+
+We can also use error handling middleware to work with errors
