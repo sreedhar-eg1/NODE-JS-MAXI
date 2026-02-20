@@ -8,7 +8,7 @@ const MongoDBStore = require("connect-mongodb-session")(session); // connect ses
 const cookieParser = require("cookie-parser"); // cookieParser is required while using csrf-csrf dependency
 const flash = require('connect-flash') // To show flash message with the help of sessions
 
-const { generateCsrfToken } = require("./middleware/csrf");
+const { generateCsrfToken, doubleCsrfProtection } = require("./middleware/csrf");
 
 const User = require("./models/user");
 
@@ -63,6 +63,7 @@ app.use((req, res, next) => {
   res.locals.csrfToken = generateCsrfToken(req, res); // available in all views with the help of locals field
   next();
 });
+app.use(doubleCsrfProtection)
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);

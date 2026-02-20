@@ -6,9 +6,16 @@ const {
   validateRequest, // Also a convenience if you plan on making your own middleware.
   doubleCsrfProtection, // This is the default CSRF protection middleware.
 } = doubleCsrf({
-  getSecret: (req) => 'node complete csrf attack protection',
-  getSessionIdentifier: (req) => req.session.id // return the requests unique identifier
+  getSecret: (req) => "node complete csrf attack protection",
+  getSessionIdentifier: (req) => req.session.id, // return the requests unique identifier
+  ignoredMethods: ["GET", "HEAD", "OPTIONS"], // A list of request methods that will not be protected.
+  getCsrfTokenFromRequest: (req) => req.body.csrf,
 });
 
 // Export so routes can use it
-module.exports = { doubleCsrfProtection, generateCsrfToken };
+module.exports = {
+  doubleCsrfProtection,
+  generateCsrfToken,
+  invalidCsrfTokenError,
+  validateRequest,
+};

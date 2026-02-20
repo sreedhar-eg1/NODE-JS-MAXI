@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 
 const User = require("../models/user");
+const user = require("../models/user");
 
 exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
@@ -126,13 +127,71 @@ exports.postReset = (req, res, next) => {
         return user.save();
       })
       .then(() => {
-        console.log("Reset password mail sent.")
-        res.redirect(`/reset/${token}`)
+        console.log("Reset password mail sent.");
+        res.redirect(`/reset/${token}`);
       })
       .catch((err) => {
         console.log(err);
       });
   });
+};
+
+exports.getNewPassword = (req, res, next) => {
+  const token = req.params.resetToken;
+
+  User.findOne({
+    resetToken: token,
+    resetTokenExpiration: { $gt: Date.now() },
+  })
+    .then((user) => {
+      if (!user) {
+        req.flash(
+          "error",
+          "E-mail exists already. Please pick a different one.",
+        );
+        return res.redirect(`/reset/${token}`);
+      }
+
+      res.render("auth/new-password", {
+        path: "/reset",
+        pageTitle: "Update Password",
+        errorMessage: req.flash("error"),
+        userId: user._id.toString(),
+        passwordToken: token,
+      });
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.postNewPassword = (req, res, next) => {
+  const newPassword = req.body.password;
+  const userId = req.body.userId;
+  const passwordToken = req.body.passwordToken;
+  let resetUser;
+
+  User.findOne({
+    _id: userId,
+    resetToken: passwordToken,
+    resetTokenExpiration: { $gt: Date.now() },
+  })
+    .then((user) => {
+      if (!user) {
+        req.flash("error", "Failed to fetch user. Please try again later");
+        return res.redirect("/login");
+      }
+      resetUser = user;
+
+      return bcrypt.hash(newPassword, 12);
+    })
+    .then((hashedPasssword) => {
+      resetUser.password = hashedPasssword;
+      resetUser.resetToken = undefined;
+      resetUser.resetTokenExpiration = undefined;
+
+      return resetUser.save();
+    })
+    .then(() => res.redirect("/login"))
+    .catch((err) => console.log(err));
 };
 
 exports.postLogout = (req, res, next) => {
