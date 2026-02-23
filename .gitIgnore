@@ -3,6 +3,8 @@
 /jspm_packages
 node_modules
 
+images
+
 # Optional npm cache directory
 .npm
 

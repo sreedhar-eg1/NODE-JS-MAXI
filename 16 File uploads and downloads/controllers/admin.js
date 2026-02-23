@@ -16,9 +16,22 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
-  const imageUrl = req.file;
+  const image = req.file;
   const description = req.body.description;
   const price = req.body.price;
+
+  if (!image) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Add Product",
+      path: "/edit/add-product",
+      editing: false,
+      hasError: true,
+      product: { title, price, description },
+      isAuthenticated: req.session.isLoggedIn,
+      errorMessage: "Attached file is not an image",
+      validationErrors: [],
+    });
+  }
 
   const errors = validationResult(req);
 
@@ -28,12 +41,14 @@ exports.postAddProduct = (req, res, next) => {
       path: "/edit/add-product",
       editing: false,
       hasError: true,
-      product: { title, imageUrl, price, description },
+      product: { title, price, description },
       isAuthenticated: req.session.isLoggedIn,
       errorMessage: errors.array()[0].msg,
       validationErrors: errors.array(),
     });
   }
+
+  const imageUrl = image.path;
 
   const newProduct = new Product({
     title,
@@ -87,7 +102,7 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
-  const updatedImageUrl = req.body.imageUrl;
+  const updatedImageUrl = req.file;
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
 
@@ -101,7 +116,6 @@ exports.postEditProduct = (req, res, next) => {
       hasError: true,
       product: {
         title: updatedTitle,
-        imageUrl: updatedImageUrl,
         price: updatedPrice,
         description: updatedDescription,
         _id: prodId,
@@ -120,7 +134,11 @@ exports.postEditProduct = (req, res, next) => {
 
       product.title = updatedTitle;
       product.price = updatedPrice;
-      product.imageUrl = updatedImageUrl;
+
+      if (updatedImageUrl) {
+        product.imageUrl = updatedImageUrl.path;
+      }
+
       product.description = updatedDescription;
 
       return product
