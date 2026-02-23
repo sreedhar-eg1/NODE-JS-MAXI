@@ -23,7 +23,7 @@ const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 
 const MONGODB_URI =
-  "mongodb+srv://sreedhareg1997_db_user:eT6lQe9C74f65Jpq@node-complete.ra50bsw.mongodb.net/Shop";
+  "mongodb+srv://sreedhareg1997_db_user:eT6lQe9C74f65Jpq@node-complete.ra50bsw.mongodb.net/NewShop";
 
 const app = express();
 
@@ -37,7 +37,7 @@ const filestorage = multer.diskStorage({
     cb(null, "images");
   },
   filename: (req, file, cb) => {
-    cb(null,  Date.now() + "-" + file.originalname);
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
 const fileFilter = (req, file, cb) => {
@@ -61,6 +61,7 @@ app.set("views", "views"); // Specify the views directory
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(upload); // To handle file uploads
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/images", express.static(path.join(__dirname, "images")));
 app.use(cookieParser());
 app.use(
   // registering session
@@ -109,7 +110,13 @@ app.use(errorController.get404);
 // Middleware with 4 arguments is used to handle errors, whenever we call next(error) in our code,
 // this middleware will be executed
 app.use((error, req, res, next) => {
-  res.redirect("/500");
+  // res.status(error.httpStatusCode).render(...);
+  // res.redirect('/500');
+  res.status(500).render("500", {
+    pageTitle: "Error!",
+    path: "/500",
+    isAuthenticated: req.session.isLoggedIn,
+  });
 });
 
 mongoose

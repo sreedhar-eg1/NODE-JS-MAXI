@@ -18,14 +18,9 @@ router.post(
   "/add-product",
   isAuth,
   [
-    body("title")
-      .isString()
-      .isLength({ min: 3 })
-      .trim(),
+    body("title").isString().isLength({ min: 3 }).trim(),
     body("price").isFloat(),
-    body("description")
-      .isLength({ min: 5, max: 400 })
-      .trim(),
+    body("description").isLength({ min: 5, max: 400 }).trim(),
   ],
   adminController.postAddProduct,
 );
@@ -37,11 +32,8 @@ router.post(
   isAuth,
   [
     body("title").isString().isLength({ min: 3 }).trim(),
-    body("imageUrl").isURL().trim(),
     body("price").isFloat(),
-    body("description")
-      .isLength({ min: 5, max: 400 })
-      .trim(),
+    body("description").isLength({ min: 5, max: 400 }).trim(),
   ],
   adminController.postEditProduct,
 );

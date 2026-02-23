@@ -26,4 +26,4 @@ const productSchema = new mongoose.Schema({
 
 // To connects the schema to the database with a name
 // pural of the model name will be the collection name
-module.exports = mongoose.model("ShopProduct", productSchema)
+module.exports = mongoose.model("Product", productSchema)
