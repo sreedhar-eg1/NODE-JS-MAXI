@@ -49,6 +49,13 @@ app.use(
 app.use(flash()); // registering flash, so we can use it anywhere across our application
 
 app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = generateCsrfToken(req, res); // available in all views with the help of locals field
+  next();
+});
+app.use(doubleCsrfProtection);
+
+app.use((req, res, next) => {
   if (!req.session.user) {
     return next();
   }
@@ -66,13 +73,6 @@ app.use((req, res, next) => {
       throw new Error(err);
     });
 });
-
-app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.isLoggedIn;
-  res.locals.csrfToken = generateCsrfToken(req, res); // available in all views with the help of locals field
-  next();
-});
-app.use(doubleCsrfProtection);
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);

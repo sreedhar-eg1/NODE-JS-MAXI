@@ -19,3 +19,9 @@ we till now used middleware with 3 arguments, i.e (req, res, next) => {}
 But express has 4th arguments also which is an error arguments (req, res, next, err) => {}
 
     If we got more tan one error handling middleware, then it get executed from top to  bottom
+
+Throwing the error doesnot lead it to the middleware
+    throw Error('Some error')
+    Here there is a catch, if we throw error inside async operation, i.e inside then or catch, then it doesnot lead it to the
+    middleware
+    but other than async operation, i,e inside synchronous code, then it leads to the middleware
