@@ -40,7 +40,20 @@ const filestorage = multer.diskStorage({
     cb(null, new Date().toISOString() + "-" + file.originalname);
   },
 });
-const upload = multer({ storage: filestorage }).single("image"); // To handle file uploads, dest is the destination folder where the uploaded files will be stored, single means we are uploading a single file and 'image' is the name of the field in the form which will be used to upload the file
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+const upload = multer({ storage: filestorage, fileFilter: fileFilter }).single(
+  "image",
+); // To handle file uploads, dest is the destination folder where the uploaded files will be stored, single means we are uploading a single file and 'image' is the name of the field in the form which will be used to upload the file
 
 app.set("view engine", "ejs"); // Set EJS as the templating engine
 app.set("views", "views"); // Specify the views directory
