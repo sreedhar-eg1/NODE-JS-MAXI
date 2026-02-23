@@ -13,3 +13,9 @@ Working with errors
         then()-catch()
 
 We can also use error handling middleware to work with errors
+
+If we pass error inside next(), then it skip all other handling middleware
+we till now used middleware with 3 arguments, i.e (req, res, next) => {}
+But express has 4th arguments also which is an error arguments (req, res, next, err) => {}
+
+    If we got more tan one error handling middleware, then it get executed from top to  bottom

@@ -78,7 +78,14 @@ app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
+app.get("/500", errorController.get500); // To render a error page
 app.use(errorController.get404);
+
+// Middleware with 4 arguments is used to handle errors, whenever we call next(error) in our code,
+// this middleware will be executed
+app.use((error, req, res, next) => {
+  res.redirect("/500");
+});
 
 mongoose
   .connect(MONGODB_URI)

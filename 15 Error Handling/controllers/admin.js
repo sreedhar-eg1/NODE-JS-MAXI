@@ -45,7 +45,11 @@ exports.postAddProduct = (req, res, next) => {
   newProduct
     .save() // this save method is coming from the mongoose model
     .then(() => res.redirect("/admin/products"))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getEditProduct = (req, res, next) => {
@@ -73,7 +77,11 @@ exports.getEditProduct = (req, res, next) => {
         validationErrors: [],
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postEditProduct = (req, res, next) => {
@@ -96,7 +104,7 @@ exports.postEditProduct = (req, res, next) => {
         imageUrl: updatedImageUrl,
         price: updatedPrice,
         description: updatedDescription,
-        _id: prodId
+        _id: prodId,
       },
       isAuthenticated: req.session.isLoggedIn,
       errorMessage: errors.array()[0].msg,
@@ -120,7 +128,11 @@ exports.postEditProduct = (req, res, next) => {
         .then(res.redirect("/admin/products"))
         .catch((err) => console.log(err));
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getProducts = (req, res, next) => {
@@ -133,7 +145,11 @@ exports.getProducts = (req, res, next) => {
         isAuthenticated: req.session.isLoggedIn,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postDeleteProduct = (req, res, next) => {
@@ -141,5 +157,9 @@ exports.postDeleteProduct = (req, res, next) => {
 
   Product.deleteOne({ _id: prodId, userId: req.user._id })
     .then(res.redirect("/admin/products"))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
