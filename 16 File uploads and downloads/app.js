@@ -7,6 +7,7 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session); // connect session details with mongoDB
 const cookieParser = require("cookie-parser"); // cookieParser is required while using csrf-csrf dependency
 const flash = require("connect-flash"); // To show flash message with the help of sessions
+const multer = require("multer");
 
 const {
   generateCsrfToken,
@@ -31,10 +32,21 @@ const store = new MongoDBStore({
   collection: "sessions",
 });
 
+const filestorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + "-" + file.originalname);
+  },
+});
+const upload = multer({ storage: filestorage }).single("image"); // To handle file uploads, dest is the destination folder where the uploaded files will be stored, single means we are uploading a single file and 'image' is the name of the field in the form which will be used to upload the file
+
 app.set("view engine", "ejs"); // Set EJS as the templating engine
 app.set("views", "views"); // Specify the views directory
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(upload); // To handle file uploads
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 app.use(
