@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
+const PDFDocument = require("pdfkit");
+
 const Product = require("../models/product");
 const Order = require("../models/order");
 
@@ -162,6 +164,39 @@ exports.getInvoice = (req, res, next) => {
       const invoiceName = "invoice-" + orderId + ".pdf";
       const invoicePath = path.join("data", "invoices", invoiceName);
 
+      // CREATING PDF INVOICE WITH PDFKIT
+      const doc = new PDFDocument();
+      doc.pipe(fs.createWriteStream(invoicePath));
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        'inline: filename="' + invoiceName + '"',
+      );
+      doc.pipe(res);
+
+      doc.fontSize(26).text("Invoice", {
+        underline: true,
+      });
+      doc.text("------------------------------");
+      let totalPrice = 0;
+      order.products.forEach((prod) => {
+        totalPrice += prod.quantity * prod.product.price;
+        doc.fontSize(14).text(
+          prod.product.title +
+            " - " +
+            prod.quantity +
+            " x " +
+            "$" +
+            prod.product.price,
+        );
+      });
+      doc.text("------------------------------");
+      doc.fontSize(20).text("Total Price: $" + totalPrice);
+
+      doc.end();
+
+      // ----------------------------------------------------------------------------------
+
       // fs.readFile(invoicePath, (err, data) => {
       //   if (err) {
       //     return next(err);
@@ -175,14 +210,16 @@ exports.getInvoice = (req, res, next) => {
       //   res.send(data);
       // });
 
+      // ----------------------------------------------------------------------------------
+
       // STREAMING THE FILE
-      const file = fs.createReadStream(invoicePath);
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader(
-        "Content-Disposition",
-        'inline: filename="' + invoiceName + '"',
-      );
-      file.pipe(res); // To send the file as response, we can use pipe method of readable stream, 
+      // const file = fs.createReadStream(invoicePath);
+      // res.setHeader("Content-Type", "application/pdf");
+      // res.setHeader(
+      //   "Content-Disposition",
+      //   'inline: filename="' + invoiceName + '"',
+      // );
+      // file.pipe(res); // To send the file as response, we can use pipe method of readable stream,
       // it will read the file and send it as response
     })
     .catch((err) => next(err));
