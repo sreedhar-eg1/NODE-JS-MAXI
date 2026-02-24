@@ -7,3 +7,7 @@ While working with files, we cannot extract it from the req.body
     So to make it work, we need to use different parser, and bodyParser doesnot include anything to handle this binary data
     So we need new package for that. which is "npm i multer"
         which handle both text and binary data
+
+Streaming Data vs Preloading Data
+    For bigger files it is not recommmended to read the entire file, it causes memory overflow issue
+    So in that case we need to stream the data
