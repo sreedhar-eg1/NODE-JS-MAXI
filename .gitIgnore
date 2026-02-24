@@ -4,6 +4,8 @@
 node_modules
 
 images
+data
+/data
 
 # Optional npm cache directory
 .npm
