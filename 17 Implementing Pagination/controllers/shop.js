@@ -43,7 +43,7 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  const page = +req.query.page;
+  const page = +req.query.page || 1;
   let totalItems;
 
   Product.find()
