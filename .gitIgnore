@@ -3,6 +3,9 @@
 /jspm_packages
 node_modules
 
+.env
+.env.*
+
 images
 data
 /data

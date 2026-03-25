@@ -8,6 +8,7 @@ const MongoDBStore = require("connect-mongodb-session")(session); // connect ses
 const cookieParser = require("cookie-parser"); // cookieParser is required while using csrf-csrf dependency
 const flash = require("connect-flash"); // To show flash message with the help of sessions
 const multer = require("multer");
+require('dotenv').config()
 
 const {
   generateCsrfToken,
@@ -22,8 +23,7 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 
-const MONGODB_URI =
-  "mongodb+srv://sreedhareg1997_db_user:eT6lQe9C74f65Jpq@node-complete.ra50bsw.mongodb.net/NewShop";
+const MONGODB_URI = process.env.MONGODB_URI;
 
 const app = express();
 

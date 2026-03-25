@@ -1,0 +1,2 @@
+For payment, we willbe using strip dependency
+    npm i stripe
