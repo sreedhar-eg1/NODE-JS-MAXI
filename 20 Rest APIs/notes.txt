@@ -13,6 +13,7 @@ Routing
 HTTP Methods
     GET, POST, DELETE, PATCH, PUT, 
     OPTIONS => sent automatically by the browser
+            It checks, the the request that you want to send is allowed, otherwise it throws an error
 
 CORS error
     Cross Origin Resource Sharing
