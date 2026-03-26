@@ -1,0 +1,23 @@
+Front End (UI) is decoupled from the Backend
+    Here we use rest APIs
+
+    REST => Representational State transfer
+            Transfer Data instead of Interfaces
+
+We can send the response in different format
+    HTML, plain text, XML, JSON
+
+Routing
+    Whenever the request is sent from client, this request is accepted by server, perform the task and return the response
+
+HTTP Methods
+    GET, POST, DELETE, PATCH, PUT, 
+    OPTIONS => sent automatically by the browser
+
+CORS error
+    Cross Origin Resource Sharing
+    By default this Resource sharing is not allowed by the browser
+        Ex: if both client and the server run on the same server then we can send and recieve responses 
+            if domain URL not matching, then we cant send or recieve, we will get CORS error
+
+    To fix the, we need to change few things in the server 
