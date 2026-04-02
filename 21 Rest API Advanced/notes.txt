@@ -1,0 +1,17 @@
+Express error handling middleware
+    const error = new Error("Validation failed, entered data is incorrect.");
+    error.statusCode = 422;
+    throw error
+
+    If the error handling block is not in any asynchronous code, then the express middleware catches this thrown error
+    But if it in asynchronous block like than and catch, then it wont work like this
+        In this case, we need to pass the error inside next
+            .catch((err) => {
+                if (!err.statusCode) {
+                    err.statusCode = 500;
+                }
+
+                next(err);
+            })
+
+    But if we throw an error in the then block, then that error will be catched by the catch block
