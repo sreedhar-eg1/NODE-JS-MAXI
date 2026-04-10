@@ -25,3 +25,5 @@ Authentication
     TOKEN:
         JSON Data + Signature => JWT Token (JSON Web Token)
         This signature can only be verified by the server
+
+    From front end, we add "Bearer" to the start of the token, it is just an convention to indicate that this is a JWT token
