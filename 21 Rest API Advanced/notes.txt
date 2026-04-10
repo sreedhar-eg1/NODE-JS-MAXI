@@ -15,3 +15,13 @@ Express error handling middleware
             })
 
     But if we throw an error in the then block, then that error will be catched by the catch block
+
+Authentication
+    When  client send auth information to the server, the server validates and send token back to the client
+    This token will be stored in the client, so the client can attach this token to all subsequent request
+
+        This token can only be validated by the server
+
+    TOKEN:
+        JSON Data + Signature => JWT Token (JSON Web Token)
+        This signature can only be verified by the server
