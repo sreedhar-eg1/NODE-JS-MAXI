@@ -16,6 +16,7 @@ exports.getPosts = (req, res, next) => {
     .then((count) => {
       totalItems = count;
       return Post.find()
+        .populate("creator", "name")
         .skip((currentPage - 1) * perPage)
         .limit(perPage);
     })
@@ -64,6 +65,7 @@ exports.createPost = (req, res, next) => {
   });
 
   let creator;
+  let savedPost;
 
   post
     .save()
@@ -72,15 +74,17 @@ exports.createPost = (req, res, next) => {
       return User.findById(userId);
     })
     .then((user) => {
-      creator = user
+      creator = user;
       user.posts.push(savedPost);
       return user.save();
     })
     .then((result) => {
       res.status(201).json({
         message: "Post created successfully!",
-        post: post,
-        creator: { _id: creator._id, name: creator.name },
+        post: {
+          ...savedPost._doc,
+          creator: { _id: creator._id, name: creator.name },
+        },
       });
     })
     .catch((err) => {
@@ -96,6 +100,7 @@ exports.getPost = (req, res, next) => {
   const postId = req.params.postId;
 
   Post.findById(postId)
+    .populate("creator", "name")
     .then((post) => {
       if (!post) {
         const error = new Error("Could not find post");
@@ -150,6 +155,12 @@ exports.updatePost = (req, res, next) => {
         throw error;
       }
 
+      if (post.creator.toString() !== req.userId) {
+        const error = new Error("Not authorized!");
+        error.statusCode = 403;
+        throw error;
+      }
+
       if (imageUrl !== post.imageUrl) {
         clearImage(post.imageUrl);
       }
@@ -158,7 +169,7 @@ exports.updatePost = (req, res, next) => {
       post.content = content;
       post.imageUrl = imageUrl;
 
-      return post.save();
+      return post.save().then((result) => result.populate("creator", "name"));
     })
     .then((result) => {
       res.status(200).json({
@@ -186,9 +197,22 @@ exports.deletePost = (req, res, next) => {
         throw error;
       }
 
+      if (post.creator.toString() !== req.userId) {
+        const error = new Error("Not authorized!");
+        error.statusCode = 403;
+        throw error;
+      }
+
       clearImage(post.imageUrl);
 
       return Post.findByIdAndDelete(postId);
+    })
+    .then((result) => {
+      return User.findById(req.userId);
+    })
+    .then((user) => {
+      user.posts.pull(postId);
+      return user.save();
     })
     .then((result) => {
       res.status(200).json({

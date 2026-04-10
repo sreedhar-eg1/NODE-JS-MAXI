@@ -27,3 +27,6 @@ Authentication
         This signature can only be verified by the server
 
     From front end, we add "Bearer" to the start of the token, it is just an convention to indicate that this is a JWT token
+
+mongoose .pull method
+    to remove something from mongodb where the field is array
