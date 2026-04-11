@@ -1,0 +1,12 @@
+Async Await
+    Asynchronous requests in a synchronous way
+
+    When we are using promises, in place of promise we can make use of async request
+
+    while using promises, if we have some other code after promise then that code may be executed before the promises
+        Ex: Post.find().then(post => console.log(post)).catch(err => console.log(err))
+            console.log("HI")
+
+            Here console.log("HI") will be executed before
+
+        There is another approach to handle asynchronous operation, which is callback approach
