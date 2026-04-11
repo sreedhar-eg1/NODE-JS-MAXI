@@ -10,3 +10,8 @@ Async Await
             Here console.log("HI") will be executed before
 
         There is another approach to handle asynchronous operation, which is callback approach
+
+    We can handle error in the async await request using try and catch
+
+NOTE
+    After node 14 version, we can use await outside async method, it is called top level await
