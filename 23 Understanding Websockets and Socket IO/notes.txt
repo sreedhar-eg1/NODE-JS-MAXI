@@ -1,0 +1,18 @@
+Websocket
+    Real time web services
+
+    Currently we send request from the client with neccessary data, in turn server send back the information requested by
+    client
+
+    SO, now we have something, where something get changed in the server, and we nned to inform client regarding the changes
+        In this case, we can use websocket instead of http
+
+    Websocket:
+        established via http
+        It will upgrade the http protocol, with this upgrade we can use websocket
+
+        In http, client send request, where as server send response
+
+        In websocket, push data from server to the client
+
+    We can use both http and websocket in the same application
