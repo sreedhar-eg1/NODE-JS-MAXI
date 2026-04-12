@@ -16,3 +16,6 @@ Websocket
         In websocket, push data from server to the client
 
     We can use both http and websocket in the same application
+
+-------------------------------------------------------------------------------------------------------
+we can find many dependency for websocket, one of the populat is socket.io
