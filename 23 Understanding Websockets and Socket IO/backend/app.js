@@ -68,8 +68,14 @@ mongoose
     "mongodb+srv://sreedhareg1997_db_user:eT6lQe9C74f65Jpq@node-complete.ra50bsw.mongodb.net/messages",
   )
   .then((result) => {
-    app.listen(8080, () =>
+    const server = app.listen(8080, () =>
       console.log("Connected to Database and running on port 8080"),
     );
+
+    const io = require("./socket").init(server)
+
+    io.on("connection", (socket) => {
+      console.log("Client connected");
+    });
   })
   .catch((err) => console.log(err));
