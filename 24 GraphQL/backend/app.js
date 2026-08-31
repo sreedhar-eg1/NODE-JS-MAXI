@@ -4,12 +4,14 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const multer = require("multer");
-const { createHandler } = require("graphql-http/lib/use/express");
+const { createYoga } = require("graphql-yoga");
 
 const schema = require("./graphql/schema");
 const rootValue = require("./graphql/resolvers");
 
 const app = express();
+
+const yoga = createYoga({ schema, rootValue, maskedErrors: false });
 
 const filestorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -61,13 +63,7 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message: message, data: data });
 });
 
-app.all(
-  "/graphql",
-  createHandler({
-    schema,
-    rootValue,
-  }),
-);
+app.use("/graphql", yoga);
 
 mongoose
   .connect(

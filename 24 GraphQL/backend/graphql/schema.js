@@ -1,6 +1,8 @@
-const { buildSchema } = require("graphql");
+const { createSchema } = require("graphql-yoga");
+const resolvers = require("./resolvers");
 
-module.exports = buildSchema(`
+module.exports = createSchema({
+  typeDefs: `
     type Post {
         _id: ID!
         title: String!
@@ -26,7 +28,13 @@ module.exports = buildSchema(`
         password: String!
     }
 
-    type RootMutation {
+    type Query {
+        hello: String
+    }
+
+    type Mutation {
         createUser(userInput: UserInputData): User!
     }
-`);
+  `,
+  resolvers: resolvers
+});
