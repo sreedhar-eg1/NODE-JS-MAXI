@@ -1,0 +1,12 @@
+REST API
+    Stateless, client independent API for exchanging data
+
+GraphQL
+    Stateless, client independent API for exchanging data with higher query flexibility
+
+    In GraphQL we have just one endpoint/API, which basically a POST endpoint
+
+    Operation Types in GraphQL
+        Query => Retrieve Data ("GET")
+        Mutation => Manipulate Data ("POST", "PUT", "PATCH", "DELETE")
+        Subscription => Setup realtime connection via websockets
