@@ -22,6 +22,11 @@ module.exports = createSchema({
         posts: [Post!]!
     }
 
+    type AuthData {
+        token: String!
+        userId: String!
+    }
+
     input UserInputData {
         email: String!
         name: String!
@@ -29,7 +34,7 @@ module.exports = createSchema({
     }
 
     type Query {
-        hello: String
+        login(email: String!, password: String!): AuthData
     }
 
     type Mutation {

@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const validator = require("validator");
 const { GraphQLError } = require("graphql");
 
@@ -6,7 +7,44 @@ const User = require("../models/user");
 
 module.exports = {
   Query: {
-    hello: () => "Hello world!",
+    login: async function ({ email, password }) {
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        throw new GraphQLError("User not found!", {
+          extensions: {
+            code: "USER_NOT_FOUND",
+            http: {
+              status: 404,
+            },
+          },
+        });
+      }
+
+      const isEqual = await bcrypt.compare(password, user.password);
+
+      if (!isEqual) {
+        throw new GraphQLError("Password is incorrect!", {
+          extensions: {
+            code: "INVALID_CREDENTIALS",
+            http: {
+              status: 401,
+            },
+          },
+        });
+      }
+
+      const token = jwt.sign(
+        {
+          userId: user._id.toString(),
+          email: user.email,
+        },
+        "mySecretKey",
+        { expiresIn: "1h" },
+      );
+
+      return { token, userId: userId._id.toString() };
+    },
   },
   Mutation: {
     // The signature changes to (parent, args, context)
