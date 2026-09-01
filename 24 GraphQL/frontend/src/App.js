@@ -104,32 +104,45 @@ function App() {
     (event, authData) => {
       event.preventDefault();
       setAuthLoading(true);
-      fetch("http://localhost:8080/auth/login", {
+
+      const graphqlQuery = {
+        query: `
+          {
+            login(email: "${authData.email}", password: "${authData.password}") {
+              token
+              userId
+            }
+          }
+        `,
+      };
+
+      fetch("http://localhost:8080/graphql", {
         method: "POST",
-        body: JSON.stringify({
-          email: authData.email,
-          password: authData.password,
-        }),
+        body: JSON.stringify(graphqlQuery),
         headers: {
           "Content-Type": "application/json",
         },
       })
         .then((res) => {
-          if (res.status === 422) {
-            throw new Error("Validation failed.");
-          }
-          if (res.status !== 200 && res.status !== 201) {
-            throw new Error("Could not authenticate you!");
-          }
+          // GraphQL errors come back inside the JSON body, not via HTTP status,
+          // so just parse it here and inspect errors in the next .then
           return res.json();
         })
         .then((resData) => {
+          if (resData.errors) {
+            const message =
+              resData.errors[0].message || "Could not authenticate you!";
+            throw new Error(message);
+          }
+
+          const loginData = resData.data.login;
+
           setIsAuth(true);
-          setToken(resData.token);
+          setToken(loginData.token);
           setAuthLoading(false);
-          setUserId(resData.userId);
-          localStorage.setItem("token", resData.token);
-          localStorage.setItem("userId", resData.userId);
+          setUserId(loginData.userId);
+          localStorage.setItem("token", loginData.token);
+          localStorage.setItem("userId", loginData.userId);
           const remainingMilliseconds = 60 * 60 * 1000;
           const expiryDate = new Date(
             new Date().getTime() + remainingMilliseconds,

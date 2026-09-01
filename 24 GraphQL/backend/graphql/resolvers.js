@@ -7,7 +7,7 @@ const User = require("../models/user");
 
 module.exports = {
   Query: {
-    login: async function ({ email, password }) {
+    login: async function (parent, { email, password }, context) {
       const user = await User.findOne({ email });
 
       if (!user) {
@@ -43,7 +43,7 @@ module.exports = {
         { expiresIn: "1h" },
       );
 
-      return { token, userId: userId._id.toString() };
+      return { token, userId: user._id.toString() };
     },
   },
   Mutation: {
