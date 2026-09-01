@@ -5,13 +5,31 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const multer = require("multer");
 const { createYoga } = require("graphql-yoga");
+const { GraphQLError } = require("graphql");
 
 const schema = require("./graphql/schema");
 const rootValue = require("./graphql/resolvers");
 
 const app = express();
 
-const yoga = createYoga({ schema, rootValue, maskedErrors: false });
+const yoga = createYoga({
+  schema,
+  rootValue,
+  maskedErrors: {
+    maskError(error, message, isDev) {
+      const original = error.originalError || error;
+
+      // Pass through errors you threw intentionally (they're "safe")
+      if (original instanceof GraphQLError) {
+        return original;
+      }
+
+      // Anything else is unexpected — hide the details
+      console.error(error);
+      return new GraphQLError("Something went wrong.");
+    },
+  },
+});
 
 const filestorage = multer.diskStorage({
   destination: (req, file, cb) => {

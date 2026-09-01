@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
+const { GraphQLError } = require("graphql");
 
 const User = require("../models/user");
 
@@ -24,8 +25,12 @@ module.exports = {
       }
 
       if (errors.length) {
-        const error = new Error("Invalid input!");
-        throw error;
+        throw new GraphQLError("Invalid input!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            data: errors,
+          },
+        });
       }
 
       const existingUser = await User.findOne({ email: userInput.email });
