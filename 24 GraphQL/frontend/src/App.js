@@ -5,7 +5,13 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Route, Routes, Navigate, useNavigate, useParams } from "react-router-dom";
+import {
+  Route,
+  Routes,
+  Navigate,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 
 import Layout from "./components/Layout/Layout";
 import Backdrop from "./components/Backdrop/Backdrop";
@@ -144,29 +150,36 @@ function App() {
     (event, authData) => {
       event.preventDefault();
       setAuthLoading(true);
-      fetch("http://localhost:8080/auth/signup", {
-        method: "PUT",
-        body: JSON.stringify({
-          email: authData.signupForm.email.value,
-          name: authData.signupForm.name.value,
-          password: authData.signupForm.password.value,
-        }),
+
+      const graphqlQuery = {
+        query: `
+          mutation {
+            createUser(userInput: 
+            {email: "${authData.signupForm.email.value}", name: "${authData.signupForm.name.value}",
+             password: "${authData.signupForm.password.value}"}) {
+              _id
+              email
+            }
+          }
+        `,
+      };
+
+      fetch("http://localhost:8080/graphql", {
+        method: "POST",
+        body: JSON.stringify(graphqlQuery),
         headers: {
           "Content-Type": "application/json",
         },
       })
         .then((res) => {
-          if (res.status === 422) {
-            throw new Error(
-              "Validation failed. Make sure the email address isn't used yet!",
-            );
-          }
-          if (res.status !== 200 && res.status !== 201) {
-            throw new Error("Creating a user failed!");
-          }
           return res.json();
         })
-        .then(() => {
+        .then((resData) => {
+          if (resData.errors) {
+            const message = resData.errors[0].message || "Validation failed!";
+            throw new Error(message);
+          }
+
           setIsAuth(false);
           setAuthLoading(false);
           navigate("/", { replace: true });
@@ -201,10 +214,7 @@ function App() {
   if (isAuth) {
     routes = (
       <Routes>
-        <Route
-          path="/"
-          element={<FeedPage userId={userId} token={token} />}
-        />
+        <Route path="/" element={<FeedPage userId={userId} token={token} />} />
         <Route
           path="/:postId"
           element={<SinglePostPage userId={userId} token={token} />}

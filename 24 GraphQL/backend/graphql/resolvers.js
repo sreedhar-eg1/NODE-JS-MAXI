@@ -36,7 +36,7 @@ module.exports = {
       const existingUser = await User.findOne({ email: userInput.email });
 
       if (existingUser) {
-        throw new Error("User exists already!");
+        throw new GraphQLError("User exists already!");
       }
 
       const hashedPassword = await bcrypt.hash(userInput.password, 12);

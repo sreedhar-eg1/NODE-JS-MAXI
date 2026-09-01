@@ -25,7 +25,7 @@ const yoga = createYoga({
       }
 
       // Anything else is unexpected — hide the details
-      console.error(error);
+      // console.error(error);
       return new GraphQLError("Something went wrong.");
     },
   },
