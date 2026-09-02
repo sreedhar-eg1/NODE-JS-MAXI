@@ -33,12 +33,19 @@ module.exports = createSchema({
         password: String!
     }
 
+    input PostInputData {
+        title: String!
+        content: String!
+        imageUrl: String
+    }
+
     type Query {
         login(email: String!, password: String!): AuthData
     }
 
     type Mutation {
         createUser(userInput: UserInputData): User!
+        createPost(postInput: PostInputData): Post
     }
   `,
   resolvers: resolvers

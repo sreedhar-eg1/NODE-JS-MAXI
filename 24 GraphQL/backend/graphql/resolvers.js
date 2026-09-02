@@ -4,6 +4,7 @@ const validator = require("validator");
 const { GraphQLError } = require("graphql");
 
 const User = require("../models/user");
+const Post = require("../models/post");
 
 module.exports = {
   Query: {
@@ -88,6 +89,51 @@ module.exports = {
       const createdUser = await user.save();
 
       return { ...createdUser._doc, _id: createdUser._id.toString() };
+    },
+    createPost: async function (parent, { postInput }, context) {
+      console.log(parent, postInput, context);
+      const errors = [];
+
+      if (
+        validator.isEmpty(postInput.title) ||
+        !validator.isLength(postInput.title, { min: 5 })
+      ) {
+        errors.push({ message: "Title is invalid." });
+      }
+
+      if (
+        validator.isEmpty(postInput.content) ||
+        !validator.isLength(postInput.content, { min: 5 })
+      ) {
+        errors.push({ message: "Content is invalid." });
+      }
+
+      if (errors.length) {
+        throw new GraphQLError("Invalid input!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            data: errors,
+            http: {
+              status: 422,
+            },
+          },
+        });
+      }
+
+      const post = new Post({
+        title: postInput.title,
+        content: postInput.content,
+        imageUrl: postInput.imageUrl,
+      });
+
+      const createdPost = await post.save();
+
+      return {
+        ...createdPost._doc,
+        _id: createdPost._id.toString(),
+        createdAt: createdPost.createdAt.toISOString(),
+        updatedAt: createdPost.updatedAt.toISOString(),
+      };
     },
   },
 };
