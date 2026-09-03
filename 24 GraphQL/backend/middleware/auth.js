@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
 
   if (!authHeader) {
     req.isAuth = false;
-    next();
+    return next();
   }
 
   const authToken = authHeader.split(" ")[1];
@@ -17,12 +17,12 @@ module.exports = (req, res, next) => {
     decodedToken = jwt.verify(authToken, "mySecretKey"); // decode and verify the token using verify method
   } catch (err) {
     req.isAuth = false;
-    next();
+    return next();
   }
 
   if (!decodedToken) {
     req.isAuth = false;
-    next();
+    return next();
   }
 
   req.userId = decodedToken.userId; // add the userId from the token to the request object so that it can be used in the next middleware or route handler

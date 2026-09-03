@@ -30,10 +30,10 @@ const yoga = createYoga({
       return new GraphQLError("Something went wrong.");
     },
   },
-  context: ({ request }) => {
-    // if you're mixing Express req in, or using yoga's own context
-    return { req };
-  },
+  context: ({ request, req, res }) => ({
+    req,
+    res,
+  }),
 });
 
 const filestorage = multer.diskStorage({

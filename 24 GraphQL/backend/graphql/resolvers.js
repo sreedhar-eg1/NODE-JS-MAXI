@@ -91,7 +91,7 @@ module.exports = {
       return { ...createdUser._doc, _id: createdUser._id.toString() };
     },
     createPost: async function (parent, { postInput }, context) {
-      console.log(parent, postInput, context);
+      // console.log(parent, postInput, context);
 
       if (!context.req.isAuth) {
         throw new GraphQLError("Not Authenticated!", {

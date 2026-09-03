@@ -155,19 +155,37 @@ function Feed(props) {
       formData.append("content", postData.content);
       formData.append("image", postData.image);
 
-      let url = "http://localhost:8080/feed/post";
-      let method = "POST";
+      const graphqlQuery = {
+        query: `
+          mutation CreatePost($postInput: PostInputData!) {
+            createPost(postInput: $postInput) {
+              _id
+              title
+              content
+              imageUrl
+              createdAt
+              creator {
+                name
+              }
+              updatedAt
+            }
+          }
+        `,
+        variables: {
+          postInput: {
+            title: postData.title,
+            content: postData.content,
+            imageUrl: "Some text url for now",
+          },
+        },
+      };
 
-      if (editPost) {
-        url = "http://localhost:8080/feed/post/" + editPost._id;
-        method = "PUT";
-      }
-
-      fetch(url, {
-        method: method,
-        body: formData,
+      fetch("http://localhost:8080/graphql", {
+        method: "POST",
+        body: JSON.stringify(graphqlQuery),
         headers: {
           Authorization: "Bearer " + props.token,
+          'Content-Type': 'application/json'
         },
       })
         .then((res) => {
@@ -177,14 +195,24 @@ function Feed(props) {
           return res.json();
         })
         .then((resData) => {
+          // GraphQL puts errors here even on a 200 response
+          if (resData.errors) {
+            throw new Error(
+              resData.errors[0]?.message ||
+                "Creating or editing a post failed!",
+            );
+          }
+
+          const postResult = resData.data.createPost;
+
           const post = {
-            _id: resData.post._id,
-            title: resData.post.title,
-            content: resData.post.content,
-            creator: resData.post.creator,
-            createdAt: resData.post.createdAt,
-            imageUrl: resData.post.imageUrl,
-            imagePath: resData.post.imageUrl.replace(/\\/g, "/"),
+            _id: postResult._id,
+            title: postResult.title,
+            content: postResult.Content, // matches schema's capital "Content"
+            creator: postResult.creator,
+            createdAt: postResult.createdAt,
+            imageUrl: postResult.imageUrl,
+            imagePath: postResult.imageUrl.replace(/\\/g, "/"),
           };
 
           setPosts((currentPosts) => {
@@ -214,10 +242,11 @@ function Feed(props) {
           setEditLoading(false);
         })
         .catch((err) => {
+          console.error(err); // helpful during development
           setIsEditing(false);
           setEditPost(null);
           setEditLoading(false);
-          setError(err);
+          setError(err.message || "Something went wrong!");
         });
     },
     [editPost, props.token],

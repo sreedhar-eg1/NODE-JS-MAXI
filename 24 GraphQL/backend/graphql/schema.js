@@ -6,7 +6,7 @@ module.exports = createSchema({
     type Post {
         _id: ID!
         title: String!
-        Content: String!
+        content: String!
         imageUrl: String!
         creator: User!
         createdAt: String!
