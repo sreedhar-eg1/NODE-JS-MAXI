@@ -46,7 +46,7 @@ module.exports = {
 
       return { token, userId: user._id.toString() };
     },
-    posts: async function (_, _, context) {
+    posts: async function (parent, args, context) {
       if (!context.req.isAuth) {
         throw new GraphQLError("Not Authenticated!", {
           extensions: {

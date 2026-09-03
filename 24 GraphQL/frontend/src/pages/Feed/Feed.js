@@ -43,25 +43,57 @@ function Feed(props) {
         setPostPage(page);
       }
 
-      fetch("http://localhost:8080/feed/posts?page=" + page, {
+      const graphqlQuery = {
+        query: `
+        {
+          posts {
+            posts {
+              _id
+              title
+              content
+              imageUrl
+              creator {
+                name
+              }
+              createdAt
+              updatedAt
+            }
+            totalPosts
+          }
+        }
+      `,
+      };
+
+      fetch("http://localhost:8080/graphql", {
+        method: "POST",
+        body: JSON.stringify(graphqlQuery),
         headers: {
+          "Content-Type": "application/json",
           Authorization: "Bearer " + props.token,
         },
       })
         .then((res) => {
-          if (res.status !== 200) {
+          if (res.status !== 200 && res.status !== 201) {
             throw new Error("Failed to fetch posts.");
           }
           return res.json();
         })
         .then((resData) => {
+          if (resData.errors) {
+            throw new Error(
+              resData.errors[0]?.message || "Failed to fetch posts.",
+            );
+          }
+
+          const { posts, totalPosts } = resData.data.posts;
+
           setPosts(
-            resData.posts.map((post) => ({
+            posts.map((post) => ({
               ...post,
               imagePath: post.imageUrl.replace(/\\/g, "/"),
             })),
           );
-          setTotalPosts(resData.totalItems);
+          setTotalPosts(totalPosts);
           setPostsLoading(false);
         })
         .catch(catchError);
@@ -70,41 +102,21 @@ function Feed(props) {
   );
 
   useEffect(() => {
-    fetch("URL")
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new Error("Failed to fetch user status.");
-        }
-        return res.json();
-      })
-      .then((resData) => {
-        setStatus(resData.status);
-      })
-      .catch(catchError);
+    // fetch("URL")
+    //   .then((res) => {
+    //     if (res.status !== 200) {
+    //       throw new Error("Failed to fetch user status.");
+    //     }
+    //     return res.json();
+    //   })
+    //   .then((resData) => {
+    //     setStatus(resData.status);
+    //   })
+    //   .catch(catchError);
 
-    fetch("http://localhost:8080/feed/posts?page=1", {
-      headers: {
-        Authorization: "Bearer " + props.token,
-      },
-    })
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new Error("Failed to fetch posts.");
-        }
-        return res.json();
-      })
-      .then((resData) => {
-        setPosts(
-          resData.posts.map((post) => ({
-            ...post,
-            imagePath: post.imageUrl.replace(/\\/g, "/"),
-          })),
-        );
-        setTotalPosts(resData.totalItems);
-        setPostsLoading(false);
-      })
-      .catch(catchError);
-  }, [catchError, props.token]);
+    loadPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const statusUpdateHandler = useCallback(
     (event) => {
@@ -185,7 +197,7 @@ function Feed(props) {
         body: JSON.stringify(graphqlQuery),
         headers: {
           Authorization: "Bearer " + props.token,
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
       })
         .then((res) => {
