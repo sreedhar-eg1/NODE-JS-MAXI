@@ -46,6 +46,33 @@ module.exports = {
 
       return { token, userId: user._id.toString() };
     },
+    posts: async function (_, _, context) {
+      if (!context.req.isAuth) {
+        throw new GraphQLError("Not Authenticated!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            http: {
+              status: 401,
+            },
+          },
+        });
+      }
+
+      const totalPosts = await Post.find().countDocuments();
+      const posts = await Post.find()
+        .sort({ createdAt: -1 })
+        .populate("creator");
+
+      return {
+        totalPosts,
+        posts: posts.map((post) => ({
+          ...post._doc,
+          _id: post._id.toString(),
+          createdAt: post.createdAt.toISOString(),
+          updatedAt: post.updatedAt.toISOString(),
+        })),
+      };
+    },
   },
   Mutation: {
     // The signature changes to (parent, args, context)
@@ -132,7 +159,7 @@ module.exports = {
         });
       }
 
-      const user = await User.findById(context.req.userId)
+      const user = await User.findById(context.req.userId);
 
       if (!user) {
         throw new GraphQLError("Invalid user!", {
@@ -149,11 +176,11 @@ module.exports = {
         title: postInput.title,
         content: postInput.content,
         imageUrl: postInput.imageUrl,
-        creator: user
+        creator: user,
       });
 
       const createdPost = await post.save();
-      user.posts.push(createdPost)
+      user.posts.push(createdPost);
       await user.save();
 
       return {

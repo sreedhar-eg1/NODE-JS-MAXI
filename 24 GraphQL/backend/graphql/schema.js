@@ -26,6 +26,11 @@ module.exports = createSchema({
         token: String!
         userId: String!
     }
+    
+    type PostData {
+        posts: [Post!]!
+        totalPosts: Int!
+    }
 
     input UserInputData {
         email: String!
@@ -41,6 +46,7 @@ module.exports = createSchema({
 
     type Query {
         login(email: String!, password: String!): AuthData
+        posts: PostData!
     }
 
     type Mutation {
