@@ -46,7 +46,7 @@ module.exports = {
 
       return { token, userId: user._id.toString() };
     },
-    posts: async function (parent, args, context) {
+    posts: async function (parent, { page }, context) {
       if (!context.req.isAuth) {
         throw new GraphQLError("Not Authenticated!", {
           extensions: {
@@ -58,9 +58,14 @@ module.exports = {
         });
       }
 
+      if (!page) page = 1;
+
+      const perPage = 2;
       const totalPosts = await Post.find().countDocuments();
       const posts = await Post.find()
         .sort({ createdAt: -1 })
+        .skip((page - 1) * perPage)
+        .limit(perPage)
         .populate("creator");
 
       return {

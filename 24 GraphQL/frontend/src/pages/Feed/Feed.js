@@ -10,6 +10,8 @@ import ErrorHandler from "../../components/ErrorHandler/ErrorHandler";
 import "./Feed.css";
 
 function Feed(props) {
+  const { userId, token } = props;
+
   const [isEditing, setIsEditing] = useState(false);
   const [posts, setPosts] = useState([]);
   const [totalPosts, setTotalPosts] = useState(0);
@@ -26,6 +28,8 @@ function Feed(props) {
 
   const loadPosts = useCallback(
     (direction) => {
+      if (!token) return;
+
       if (direction) {
         setPostsLoading(true);
         setPosts([]);
@@ -46,7 +50,7 @@ function Feed(props) {
       const graphqlQuery = {
         query: `
         {
-          posts {
+          posts(page: ${page}) {
             posts {
               _id
               title
@@ -98,7 +102,7 @@ function Feed(props) {
         })
         .catch(catchError);
     },
-    [catchError, postPage, props.token],
+    [catchError, postPage, token],
   );
 
   useEffect(() => {
@@ -116,7 +120,7 @@ function Feed(props) {
 
     loadPosts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [token]);
 
   const statusUpdateHandler = useCallback(
     (event) => {
