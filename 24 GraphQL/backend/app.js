@@ -7,6 +7,7 @@ const multer = require("multer");
 const { createYoga } = require("graphql-yoga");
 const { GraphQLError } = require("graphql");
 
+const auth = require("./middleware/auth");
 const schema = require("./graphql/schema");
 const rootValue = require("./graphql/resolvers");
 
@@ -28,6 +29,10 @@ const yoga = createYoga({
       // console.error(error);
       return new GraphQLError("Something went wrong.");
     },
+  },
+  context: ({ request }) => {
+    // if you're mixing Express req in, or using yoga's own context
+    return { req };
   },
 });
 
@@ -80,6 +85,8 @@ app.use((error, req, res, next) => {
   const data = error.data;
   res.status(status).json({ message: message, data: data });
 });
+
+app.use(auth);
 
 app.use("/graphql", yoga);
 

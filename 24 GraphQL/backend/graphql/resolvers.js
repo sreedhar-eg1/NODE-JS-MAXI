@@ -92,6 +92,18 @@ module.exports = {
     },
     createPost: async function (parent, { postInput }, context) {
       console.log(parent, postInput, context);
+
+      if (!context.req.isAuth) {
+        throw new GraphQLError("Not Authenticated!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            http: {
+              status: 401,
+            },
+          },
+        });
+      }
+
       const errors = [];
 
       if (
@@ -120,13 +132,28 @@ module.exports = {
         });
       }
 
+      const user = await User.findById(context.req.userId)
+
+      if (!user) {
+        throw new GraphQLError("Invalid user!", {
+          extensions: {
+            code: "USER_NOT_FOUND",
+            http: {
+              status: 401,
+            },
+          },
+        });
+      }
+
       const post = new Post({
         title: postInput.title,
         content: postInput.content,
         imageUrl: postInput.imageUrl,
+        creator: user
       });
 
       const createdPost = await post.save();
+      user.posts.push(createdPost)
 
       return {
         ...createdPost._doc,
