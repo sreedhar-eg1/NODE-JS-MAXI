@@ -167,43 +167,57 @@ function Feed(props) {
       setEditLoading(true);
 
       const formData = new FormData();
-      formData.append("title", postData.title);
-      formData.append("content", postData.content);
       formData.append("image", postData.image);
 
-      const graphqlQuery = {
-        query: `
-          mutation CreatePost($postInput: PostInputData!) {
-            createPost(postInput: $postInput) {
-              _id
-              title
-              content
-              imageUrl
-              createdAt
-              creator {
-                name
-              }
-              updatedAt
-            }
-          }
-        `,
-        variables: {
-          postInput: {
-            title: postData.title,
-            content: postData.content,
-            imageUrl: "Some text url for now",
-          },
-        },
-      };
+      if (isEditing) {
+        formData.append("oldPath", editPost.imageUrl);
+      }
 
-      fetch("http://localhost:8080/graphql", {
-        method: "POST",
-        body: JSON.stringify(graphqlQuery),
+      fetch("http://localhost:8080/post-image", {
+        method: "PUT",
+        body: formData,
         headers: {
           Authorization: "Bearer " + props.token,
-          "Content-Type": "application/json",
         },
       })
+        .then((res) => res.json())
+        .then((fileResData) => {
+          const imageUrl = fileResData.filePath;
+
+          const graphqlQuery = {
+            query: `
+              mutation CreatePost($postInput: PostInputData!) {
+                createPost(postInput: $postInput) {
+                  _id
+                  title
+                  content
+                  imageUrl
+                  createdAt
+                  creator {
+                    name
+                  }
+                  updatedAt
+                }
+              }
+            `,
+            variables: {
+              postInput: {
+                title: postData.title,
+                content: postData.content,
+                imageUrl: imageUrl,
+              },
+            },
+          };
+
+          return fetch("http://localhost:8080/graphql", {
+            method: "POST",
+            body: JSON.stringify(graphqlQuery),
+            headers: {
+              Authorization: "Bearer " + props.token,
+              "Content-Type": "application/json",
+            },
+          });
+        })
         .then((res) => {
           if (res.status !== 200 && res.status !== 201) {
             throw new Error("Creating or editing a post failed!");

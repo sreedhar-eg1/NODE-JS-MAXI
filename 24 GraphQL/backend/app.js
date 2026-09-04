@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -19,14 +20,9 @@ const yoga = createYoga({
   maskedErrors: {
     maskError(error, message, isDev) {
       const original = error.originalError || error;
-
-      // Pass through errors you threw intentionally (they're "safe")
       if (original instanceof GraphQLError) {
         return original;
       }
-
-      // Anything else is unexpected — hide the details
-      // console.error(error);
       return new GraphQLError("Something went wrong.");
     },
   },
@@ -61,11 +57,9 @@ const upload = multer({ storage: filestorage, fileFilter: fileFilter }).single(
   "image",
 );
 
-// app.use(bodyParser.urlencoded({extended: false})); // x-www-form-urlencoded <form>
-app.use(bodyParser.json()); // application/json
-app.use(upload);
+app.use(bodyParser.json());
 
-// Handling CORS Errors
+// --- CORS: handle this FIRST, and short-circuit OPTIONS before anything else ---
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -74,21 +68,43 @@ app.use((req, res, next) => {
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200); // preflight ends here, never reaches auth/multer/etc.
+  }
   next();
 });
 
+app.use(upload);
 app.use("/images", express.static(path.join(__dirname, "images")));
 
+app.use(auth);
+
+// Method now matches the frontend's fetch call (PUT)
+app.put("/post-image", (req, res, next) => {
+  if (!req.isAuth) {
+    return res.status(401).json({ message: "Not Authenticated!" });
+  }
+
+  if (!req.file) {
+    return res.status(200).json({ message: "No file provided!" });
+  }
+
+  if (req.body.oldPath) {
+    clearImage(req.body.oldPath);
+  }
+
+  res.status(201).json({ message: "File Stored!", filePath: req.file.path });
+});
+
+app.use("/graphql", yoga);
+
+// Error handler goes LAST, after every route, so it can actually catch their errors
 app.use((error, req, res, next) => {
   const status = error.statusCode || 500;
   const message = error.message;
   const data = error.data;
   res.status(status).json({ message: message, data: data });
 });
-
-app.use(auth);
-
-app.use("/graphql", yoga);
 
 mongoose
   .connect(
@@ -100,3 +116,8 @@ mongoose
     );
   })
   .catch((err) => console.log(err));
+
+const clearImage = (imagePath) => {
+  const filePath = path.join(__dirname, "..", imagePath);
+  fs.unlink(filePath, (err) => console.log(err));
+};
