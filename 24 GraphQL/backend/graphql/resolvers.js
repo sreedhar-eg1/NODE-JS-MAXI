@@ -78,6 +78,38 @@ module.exports = {
         })),
       };
     },
+    post: async function (parent, { id }, context) {
+      if (!context.req.isAuth) {
+        throw new GraphQLError("Not Authenticated!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            http: {
+              status: 401,
+            },
+          },
+        });
+      }
+
+      const post = await Post.findById(id).populate("creator");
+
+      if (!post) {
+        throw new GraphQLError("Post not found!", {
+          extensions: {
+            code: "NOT_FOUND",
+            http: {
+              status: 404,
+            },
+          },
+        });
+      }
+
+      return {
+        ...post._doc,
+        _id: post._id.toString(),
+        createdAt: post.createdAt.toISOString(),
+        updatedAt: post.updatedAt.toISOString(),
+      };
+    },
   },
   Mutation: {
     // The signature changes to (parent, args, context)

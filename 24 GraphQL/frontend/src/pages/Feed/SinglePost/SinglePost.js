@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-import Image from '../../../components/Image/Image';
+import Image from "../../../components/Image/Image";
 import "./SinglePost.css";
+import { useParams } from "react-router-dom";
 
 function SinglePost(props) {
+  const { postId } = useParams();
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [date, setDate] = useState("");
@@ -11,31 +14,60 @@ function SinglePost(props) {
   const [content, setContent] = useState("");
 
   useEffect(() => {
-    const postId = props.match.params.postId;
+    const graphqlQuery = {
+      query: `
+        query {
+          post(id: "${postId}") {
+            title
+            content
+            imageUrl
+            creator {
+              name
+            }
+            createdAt
+          }
+        }
+      `,
+    };
 
-    fetch("http://localhost:8080/feed/post/" + postId, {
+    fetch("http://localhost:8080/graphql", {
+      method: "POST",
+      body: JSON.stringify(graphqlQuery),
       headers: {
         Authorization: "Bearer " + props.token,
+        "Content-Type": "application/json",
       },
     })
       .then((res) => {
-        if (res.status !== 200) {
+        if (res.status !== 200 && res.status !== 201) {
           throw new Error("Failed to fetch status");
         }
         return res.json();
       })
       .then((resData) => {
-        const imageUrl = resData.post.imageUrl.replace(/\\/g, "/");
-        setTitle(resData.post.title);
-        setAuthor(resData.post.creator.name);
+        if (resData.errors) {
+          throw new Error(
+            resData.errors[0]?.message || "GraphQL request failed",
+          );
+        }
+
+        if (!resData.data || !resData.data.post) {
+          throw new Error("Post not found");
+        }
+
+        const post = resData.data.post;
+        const imageUrl = post.imageUrl.replace(/\\/g, "/");
+
+        setTitle(post.title);
+        setAuthor(post.creator.name);
         setImage("http://localhost:8080/" + imageUrl);
-        setDate(new Date(resData.post.createdAt).toLocaleDateString("en-US"));
-        setContent(resData.post.content);
+        setDate(new Date(post.createdAt).toLocaleDateString("en-US"));
+        setContent(post.content);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [props.match.params.postId, props.token]);
+  }, [postId, props.token]);
 
   return (
     <section className="single-post">
