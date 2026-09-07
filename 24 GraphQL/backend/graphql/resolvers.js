@@ -227,5 +227,80 @@ module.exports = {
         updatedAt: createdPost.updatedAt.toISOString(),
       };
     },
+    updatePost: async function (parent, { id, postInput }, context) {
+      const errors = [];
+
+      if (!context.req.isAuth) {
+        throw new GraphQLError("Not Authenticated!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            http: {
+              status: 401,
+            },
+          },
+        });
+      }
+
+      const post = await Post.findById(id).populate("creator");
+
+      if (!post) {
+        throw new GraphQLError("Post not found!", {
+          extensions: {
+            code: "NOT_FOUND",
+            http: { status: 404 },
+          },
+        });
+      }
+
+      if (post.creator._id.toString() !== context.req.userId) {
+        throw new GraphQLError("Not Authenticated!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            http: {
+              status: 403,
+            },
+          },
+        });
+      }
+
+      if (
+        validator.isEmpty(postInput.title) ||
+        !validator.isLength(postInput.title, { min: 5 })
+      ) {
+        errors.push({ message: "Title is invalid." });
+      }
+
+      if (
+        validator.isEmpty(postInput.content) ||
+        !validator.isLength(postInput.content, { min: 5 })
+      ) {
+        errors.push({ message: "Content is invalid." });
+      }
+
+      if (errors.length) {
+        throw new GraphQLError("Invalid input!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            data: errors,
+          },
+        });
+      }
+
+      post.title = postInput.title;
+      post.content = postInput.content;
+
+      if (postInput.imageUrl && postInput.imageUrl !== "undefined") {
+        post.imageUrl = postInput.imageUrl;
+      }
+
+      const updatedPost = await post.save();
+
+      return {
+        ...updatedPost._doc,
+        _id: updatedPost._id.toString(),
+        createdAt: updatedPost.createdAt.toISOString(),
+        updatedAt: updatedPost.updatedAt.toISOString(),
+      };
+    },
   },
 };

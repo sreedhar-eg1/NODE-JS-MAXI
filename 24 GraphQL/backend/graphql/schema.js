@@ -53,6 +53,7 @@ module.exports = createSchema({
     type Mutation {
         createUser(userInput: UserInputData): User!
         createPost(postInput: PostInputData): Post
+        updatePost(id: ID!, postInput: PostInputData): Post!
     }
   `,
   resolvers: resolvers

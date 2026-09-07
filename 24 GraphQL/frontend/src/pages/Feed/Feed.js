@@ -184,7 +184,7 @@ function Feed(props) {
         .then((fileResData) => {
           const imageUrl = fileResData.filePath;
 
-          const graphqlQuery = {
+          let graphqlQuery = {
             query: `
               mutation CreatePost($postInput: PostInputData!) {
                 createPost(postInput: $postInput) {
@@ -208,6 +208,35 @@ function Feed(props) {
               },
             },
           };
+
+          if (isEditing) {
+            graphqlQuery = {
+              query: `
+                mutation UpdatePost($id: ID!, $postInput: PostInputData!) {
+                  updatePost(id: $id, postInput: $postInput) {
+                    _id
+                    title
+                    content
+                    imageUrl
+                    createdAt
+                    creator {
+                      name
+                    }
+                    updatedAt
+                  }
+                }
+
+              `,
+              variables: {
+                id: editPost._id,
+                postInput: {
+                  title: postData.title,
+                  content: postData.content,
+                  imageUrl: imageUrl,
+                },
+              },
+            };
+          }
 
           return fetch("http://localhost:8080/graphql", {
             method: "POST",
@@ -233,7 +262,9 @@ function Feed(props) {
             );
           }
 
-          const postResult = resData.data.createPost;
+          const postResult = isEditing
+            ? resData.data.updatePost
+            : resData.data.createPost;
 
           const post = {
             _id: postResult._id,
