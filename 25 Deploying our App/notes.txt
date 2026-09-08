@@ -1,0 +1,6 @@
+We can develop backend application with views and without views(just rest API's)
+    In both cases we used Node JS + Express
+
+    For both, we use same hoisting requirement
+
+    Deployment will be same
