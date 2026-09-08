@@ -58,6 +58,7 @@ function Feed(props) {
               imageUrl
               creator {
                 name
+                status
               }
               createdAt
               updatedAt
@@ -106,26 +107,67 @@ function Feed(props) {
   );
 
   useEffect(() => {
-    // fetch("URL")
-    //   .then((res) => {
-    //     if (res.status !== 200) {
-    //       throw new Error("Failed to fetch user status.");
-    //     }
-    //     return res.json();
-    //   })
-    //   .then((resData) => {
-    //     setStatus(resData.status);
-    //   })
-    //   .catch(catchError);
+    const graphqlQuery = {
+      query: `
+        query {
+          user {
+            status
+          }
+        }
+      `,
+    };
+
+    fetch("http://localhost:8080/graphql", {
+      method: "POST",
+      body: JSON.stringify(graphqlQuery),
+      headers: {
+        Authorization: "Bearer " + props.token,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error("Failed to fetch user status.");
+        }
+        return res.json();
+      })
+      .then((resData) => {
+        if (resData.errors) {
+          throw new Error("Fetching user status failed!");
+        }
+        setStatus(resData.data.user.status);
+      })
+      .catch(catchError);
 
     loadPosts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [props.token]);
 
   const statusUpdateHandler = useCallback(
     (event) => {
       event.preventDefault();
-      fetch("URL")
+
+      const graphqlQuery = {
+        query: `
+          mutation UpdateStatus($status: String) {
+            updateStatus(status: $status) {
+              status
+            }
+          }
+        `,
+        variables: {
+          status
+        }
+      };
+
+      fetch("http://localhost:8080/graphql", {
+        method: "POST",
+        body: JSON.stringify(graphqlQuery),
+        headers: {
+          Authorization: "Bearer " + props.token,
+          "Content-Type": "application/json",
+        },
+      })
         .then((res) => {
           if (res.status !== 200 && res.status !== 201) {
             throw new Error("Can't update status!");
@@ -353,7 +395,7 @@ function Feed(props) {
             );
           }
 
-          loadPosts()
+          loadPosts();
           setPostsLoading(false);
         })
         .catch(() => {

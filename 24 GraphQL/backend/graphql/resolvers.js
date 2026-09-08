@@ -112,6 +112,31 @@ module.exports = {
         updatedAt: post.updatedAt.toISOString(),
       };
     },
+    user: async function (parent, args, context) {
+      if (!context.req.isAuth) {
+        throw new GraphQLError("Not Authenticated!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            http: {
+              status: 401,
+            },
+          },
+        });
+      }
+
+      const user = await User.findById(context.req.userId);
+
+      if (!user) {
+        throw new GraphQLError("User not found!", {
+          extensions: {
+            code: "NOT_FOUND",
+            http: { status: 404 },
+          },
+        });
+      }
+
+      return { ...user._doc, _id: user._id.toString() };
+    },
   },
   Mutation: {
     // The signature changes to (parent, args, context)
@@ -347,6 +372,35 @@ module.exports = {
       await user.save();
 
       return true;
+    },
+    updateStatus: async function (parent, { status }, context) {
+      if (!context.req.isAuth) {
+        throw new GraphQLError("Not Authenticated!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            http: {
+              status: 401,
+            },
+          },
+        });
+      }
+
+      const user = await User.findById(context.req.userId);
+
+      if (!user) {
+        throw new GraphQLError("User not found!", {
+          extensions: {
+            code: "NOT_FOUND",
+            http: { status: 404 },
+          },
+        });
+      }
+
+      user.status = status;
+
+      await user.save();
+
+      return { ...user._doc, _id: user._id.toString() };
     },
   },
 };
