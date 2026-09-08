@@ -1,5 +1,4 @@
 const path = require("path");
-const fs = require("fs");
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -11,6 +10,8 @@ const { GraphQLError } = require("graphql");
 const auth = require("./middleware/auth");
 const schema = require("./graphql/schema");
 const rootValue = require("./graphql/resolvers");
+
+const { clearImage } = require("./utils/removeFile");
 
 const app = express();
 
@@ -116,8 +117,3 @@ mongoose
     );
   })
   .catch((err) => console.log(err));
-
-const clearImage = (imagePath) => {
-  const filePath = path.join(__dirname, "..", imagePath);
-  fs.unlink(filePath, (err) => console.log(err));
-};

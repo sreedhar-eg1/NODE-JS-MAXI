@@ -6,6 +6,8 @@ const { GraphQLError } = require("graphql");
 const User = require("../models/user");
 const Post = require("../models/post");
 
+const { clearImage } = require("../utils/removeFile");
+
 module.exports = {
   Query: {
     login: async function (parent, { email, password }, context) {
@@ -301,6 +303,50 @@ module.exports = {
         createdAt: updatedPost.createdAt.toISOString(),
         updatedAt: updatedPost.updatedAt.toISOString(),
       };
+    },
+    deletePost: async function (parent, { id }, context) {
+      if (!context.req.isAuth) {
+        throw new GraphQLError("Not Authenticated!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            http: {
+              status: 401,
+            },
+          },
+        });
+      }
+
+      const post = await Post.findById(id);
+
+      if (!post) {
+        throw new GraphQLError("Post not found!", {
+          extensions: {
+            code: "NOT_FOUND",
+            http: { status: 404 },
+          },
+        });
+      }
+
+      if (post.creator.toString() !== context.req.userId) {
+        throw new GraphQLError("Not Authenticated!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            http: {
+              status: 403,
+            },
+          },
+        });
+      }
+
+      clearImage(post.imageUrl);
+
+      await Post.findByIdAndDelete(id);
+
+      const user = await User.findById(context.req.userId);
+      user.posts.pull(id);
+      await user.save();
+
+      return true;
     },
   },
 };

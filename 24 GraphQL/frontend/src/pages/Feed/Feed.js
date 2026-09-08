@@ -320,10 +320,24 @@ function Feed(props) {
   const deletePostHandler = useCallback(
     (postId) => {
       setPostsLoading(true);
-      fetch("http://localhost:8080/feed/post/" + postId, {
-        method: "DELETE",
+
+      const graphqlQuery = {
+        query: `
+          mutation DeletePost($id: ID!) {
+            deletePost(id: $id)
+          }
+        `,
+        variables: {
+          id: postId,
+        },
+      };
+
+      fetch("http://localhost:8080/graphql", {
+        method: "POST",
+        body: JSON.stringify(graphqlQuery),
         headers: {
           Authorization: "Bearer " + props.token,
+          "Content-Type": "application/json",
         },
       })
         .then((res) => {
@@ -332,17 +346,21 @@ function Feed(props) {
           }
           return res.json();
         })
-        .then(() => {
-          setPosts((currentPosts) =>
-            currentPosts.filter((post) => post._id !== postId),
-          );
+        .then((resData) => {
+          if (resData.errors) {
+            throw new Error(
+              resData.errors[0]?.message || "Deleting a post failed!",
+            );
+          }
+
+          loadPosts()
           setPostsLoading(false);
         })
         .catch(() => {
           setPostsLoading(false);
         });
     },
-    [props.token],
+    [props.token, loadPosts],
   );
 
   const errorHandler = useCallback(() => {
