@@ -1,0 +1,4 @@
+For having environment variable, we can install dotenv dependency
+    We can put all our variables inside .env file
+        and access it from our code via 
+            process.env

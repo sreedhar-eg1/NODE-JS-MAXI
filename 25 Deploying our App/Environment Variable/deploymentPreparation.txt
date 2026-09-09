@@ -1,0 +1,20 @@
+We will be having different environment
+    So we need to make use of environment variables
+
+    We need to reduce error output details
+        should not send sensitive information to the user
+
+    Need to set secure response headers
+        It belongs to the best practices for prod Deployment
+
+    Add asset compression
+        If we have any javascript or css file, then it is the good idea to compress those file
+        Which reduce the response size and time
+
+    Configure logging
+        stay upto date about what is happening
+
+    use SSL/TLS
+        encript data in transit
+
+Last 3 things are provided by the hoisting provider
