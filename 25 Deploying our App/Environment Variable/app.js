@@ -9,6 +9,7 @@ const cookieParser = require("cookie-parser"); // cookieParser is required while
 const flash = require("connect-flash"); // To show flash message with the help of sessions
 const multer = require("multer");
 const helmet = require("helmet"); // To secure response headers
+const compression = require("compression");
 require("dotenv").config();
 
 const {
@@ -23,6 +24,8 @@ const errorController = require("./controllers/errors");
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
+
+const { shouldCompress } = require("./util/compress");
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -60,6 +63,7 @@ app.set("view engine", "ejs"); // Set EJS as the templating engine
 app.set("views", "views"); // Specify the views directory
 
 app.use(helmet());
+app.use(compression({ filter: shouldCompress }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(upload); // To handle file uploads
 app.use(express.static(path.join(__dirname, "public")));

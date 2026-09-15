@@ -1,0 +1,2 @@
+We can make use compression package to compress the response
+    check environment variable folder to see the implementation
