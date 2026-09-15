@@ -1,0 +1,2 @@
+We can make use of helmet package to secure the response headers
+    Check Environment Variable folder to see the implementation

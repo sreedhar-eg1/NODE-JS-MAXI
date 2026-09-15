@@ -8,7 +8,8 @@ const MongoDBStore = require("connect-mongodb-session")(session); // connect ses
 const cookieParser = require("cookie-parser"); // cookieParser is required while using csrf-csrf dependency
 const flash = require("connect-flash"); // To show flash message with the help of sessions
 const multer = require("multer");
-require('dotenv').config()
+const helmet = require("helmet"); // To secure response headers
+require("dotenv").config();
 
 const {
   generateCsrfToken,
@@ -58,6 +59,7 @@ const upload = multer({ storage: filestorage, fileFilter: fileFilter }).single(
 app.set("view engine", "ejs"); // Set EJS as the templating engine
 app.set("views", "views"); // Specify the views directory
 
+app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(upload); // To handle file uploads
 app.use(express.static(path.join(__dirname, "public")));

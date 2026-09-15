@@ -27,6 +27,7 @@
     "express": "^5.1.0",
     "express-session": "^1.19.0",
     "express-validator": "^7.3.1",
+    "helmet": "^8.3.0",
     "mongodb": "^7.1.0",
     "mongoose": "^9.2.1",
     "multer": "^2.0.2",

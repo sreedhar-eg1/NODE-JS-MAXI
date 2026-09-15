@@ -2,3 +2,11 @@ For having environment variable, we can install dotenv dependency
     We can put all our variables inside .env file
         and access it from our code via 
             process.env
+
+In process.env we have a special environment variable called NODE_ENV
+    This variable is not set by anyone
+
+    Assigning value to this variable like production and development can be used to differentiate between 
+    production and development scope
+        NODE_ENV=production
+        NODE_ENV=development
