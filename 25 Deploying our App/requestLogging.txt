@@ -1,0 +1,2 @@
+We can make use of morgan dependency for setting up request logging
+    Check Environment Variable folder to see the implementation

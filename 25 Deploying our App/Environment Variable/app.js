@@ -10,6 +10,7 @@ const flash = require("connect-flash"); // To show flash message with the help o
 const multer = require("multer");
 const helmet = require("helmet"); // To secure response headers
 const compression = require("compression");
+const morgan = require("morgan");
 require("dotenv").config();
 
 const {
@@ -26,6 +27,7 @@ const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 
 const { shouldCompress } = require("./util/compress");
+const accessLogSream = require("./util/logFile");
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -64,6 +66,7 @@ app.set("views", "views"); // Specify the views directory
 
 app.use(helmet());
 app.use(compression({ filter: shouldCompress }));
+app.use(morgan('combined', {stream: accessLogSream}))
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(upload); // To handle file uploads
 app.use(express.static(path.join(__dirname, "public")));
