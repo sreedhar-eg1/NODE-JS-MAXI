@@ -1,0 +1,7 @@
+We need to use some dependency for Running automation
+    Running the test
+        Mocha dependency
+    Asserting results (Validating the test outcome)
+        Chai dependency
+    Managing side effects/ external dependencies
+        Sinon dependency
