@@ -1,0 +1,10 @@
+We need to use openssl command in our command prompt to set up SSL server
+    This command is only available for linux/mac os
+
+To use it in windows, we need to install openssl for windows
+
+command
+    openssl req -nodes -new -x509 -keyout server.key -out server.cert
+
+    The above command provides us with private and public key
+        Which can be used to encrypt and decrypt
