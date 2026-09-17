@@ -4,3 +4,15 @@ What Not To Test
 
     Basically we should not test the external dependency
         Its the dependencies job to test it
+
+One way to sove this issue with third party package is to overwrite the method that we are using
+    But this is not recommended because we have a big downside with this approach
+    The downside is, when this test gets executed, the method of third party dependency gets globally overrided
+
+Instead we have an elegant way to handle this
+    Which is by using packages to mimic the implementation
+        The packahe that we are using is sinon
+            npm i sinon
+
+Sinon is a package which helps us to create a stubs which is a replacement for the original function
+    which helps us to restore the original function

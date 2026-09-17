@@ -1,4 +1,6 @@
 const { expect } = require("chai");
+const sinon = require("sinon");
+const jwt = require("jsonwebtoken");
 
 const authMiddleware = require("../middleware/is-auth");
 
@@ -38,15 +40,36 @@ describe("Auth Middleware", function () {
     expect(authMiddleware.bind(this, req, {}, () => {})).to.throw();
   });
 
-//   it("Should yeild the userId after decoding the token", function () {
-//     const req = {
-//       get: function (headerName) {
-//         return "Bearer sometoken";
-//       },
-//     };
+  it("Should yeild the userId after decoding the token", function () {
+    const req = {
+      get: function (headerName) {
+        return "Bearer sometoken";
+      },
+    };
 
-//     authMiddleware(req, {}, () => {})
+    // This will overwrite verify method of the json web token dependency
+    // jwt.verify = function() {
+    //     return {
+    //         userId: 'some user id'
+    //     }
+    // }
 
-//     expect(req).to.have.property('userId');
-//   });
+    // Making use of sinon to override the verify method of jwt
+    sinon.stub(jwt, "verify");
+
+    jwt.verify.returns({
+      userId: "some user id",
+    });
+
+    authMiddleware(req, {}, () => {});
+
+    expect(req).to.have.property("userId");
+    expect(req).to.have.property("userId", "some user id");
+
+    // Making sure that in our middleware, jwt.verify method has been called
+    expect(jwt.verify.called).to.be.true;
+
+    // Restore the overridden method to original one
+    jwt.verify.restore();
+  });
 });
