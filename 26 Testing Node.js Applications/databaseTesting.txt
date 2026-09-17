@@ -1,0 +1,2 @@
+Strategy to test that involves database operation
+    1. Mock the part that requires database operation
