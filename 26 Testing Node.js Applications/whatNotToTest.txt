@@ -1,0 +1,6 @@
+What Not To Test
+    We should not test the method that is coming from the third party package
+        For ex, in our auth testing, we dhould test the token verification
+
+    Basically we should not test the external dependency
+        Its the dependencies job to test it
