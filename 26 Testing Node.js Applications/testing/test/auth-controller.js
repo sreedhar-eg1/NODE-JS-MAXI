@@ -7,6 +7,31 @@ const User = require("../models/user");
 const AuthController = require("../controllers/auth");
 
 describe("Auth Controller - Login", function () {
+  let savedUser;
+
+  before(async function () {
+    await mongoose.connect(
+      "mongodb+srv://sreedhareg1997_db_user:eT6lQe9C74f65Jpq@node-complete.ra50bsw.mongodb.net/test-messages",
+    );
+
+    const user = new User({
+      email: "test@test.com",
+      password: "tester",
+      name: "Test",
+      posts: [],
+    });
+    savedUser = await user.save();
+  });
+
+  after(async function () {
+    await User.deleteOne({ _id: savedUser._id });
+    await mongoose.disconnect();
+  });
+
+  afterEach(function () {
+    sinon.restore(); // safety net in case a test fails before restoring its stub
+  });
+
   it("should throw an error with code 500 if accessing the database fails", function (done) {
     sinon.stub(User, "findOne");
     User.findOne.throws();
@@ -30,18 +55,6 @@ describe("Auth Controller - Login", function () {
   it("should send a response with a valid user status for an existing user", async function () {
     this.timeout(5000);
 
-    await mongoose.connect(
-      "mongodb+srv://sreedhareg1997_db_user:eT6lQe9C74f65Jpq@node-complete.ra50bsw.mongodb.net/test-messages",
-    );
-
-    const user = new User({
-      email: "test@test.com",
-      password: "tester",
-      name: "Test",
-      posts: [],
-    });
-    const savedUser = await user.save();
-
     const req = { userId: savedUser._id.toString() };
 
     const res = {
@@ -60,8 +73,5 @@ describe("Auth Controller - Login", function () {
 
     expect(res.statusCode).to.be.equal(200);
     expect(res.userStatus).to.have.property("status", "I am new!");
-
-    await User.deleteOne({ _id: savedUser._id }); // cleanup
-    await mongoose.disconnect();
   });
 });

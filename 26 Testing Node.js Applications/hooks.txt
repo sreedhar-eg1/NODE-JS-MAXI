@@ -1,0 +1,5 @@
+There are few lifecycle provided by mocha
+
+    We can use it inside decribe function
+
+Basically this life cycle hooks runs before each test or after each test
