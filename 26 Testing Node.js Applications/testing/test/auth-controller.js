@@ -1,5 +1,6 @@
 const { expect } = require("chai");
 const sinon = require("sinon");
+const mongoose = require("mongoose");
 
 const User = require("../models/user");
 
@@ -24,5 +25,23 @@ describe("Auth Controller - Login", function () {
         done(assertionError);
       }
     }).catch(done); // catch any rejection from login itself
+  });
+
+  it("should send a response with a valid user status for an existing user", function (done) {
+    mongoose
+      .connect(
+        "mongodb+srv://sreedhareg1997_db_user:eT6lQe9C74f65Jpq@node-complete.ra50bsw.mongodb.net/test-messages",
+      )
+      .then(() => {
+        const user = new User({
+          email: "test@test.com",
+          password: "tester",
+          name: "Test",
+          posts: [],
+        });
+
+        return user.save();
+      })
+      .catch((err) => console.log(err));
   });
 });
