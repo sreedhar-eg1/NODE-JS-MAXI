@@ -27,21 +27,41 @@ describe("Auth Controller - Login", function () {
     }).catch(done); // catch any rejection from login itself
   });
 
-  it("should send a response with a valid user status for an existing user", function (done) {
-    mongoose
-      .connect(
-        "mongodb+srv://sreedhareg1997_db_user:eT6lQe9C74f65Jpq@node-complete.ra50bsw.mongodb.net/test-messages",
-      )
-      .then(() => {
-        const user = new User({
-          email: "test@test.com",
-          password: "tester",
-          name: "Test",
-          posts: [],
-        });
+  it("should send a response with a valid user status for an existing user", async function () {
+    this.timeout(5000);
 
-        return user.save();
-      })
-      .catch((err) => console.log(err));
+    await mongoose.connect(
+      "mongodb+srv://sreedhareg1997_db_user:eT6lQe9C74f65Jpq@node-complete.ra50bsw.mongodb.net/test-messages",
+    );
+
+    const user = new User({
+      email: "test@test.com",
+      password: "tester",
+      name: "Test",
+      posts: [],
+    });
+    const savedUser = await user.save();
+
+    const req = { userId: savedUser._id.toString() };
+
+    const res = {
+      statusCode: 500,
+      userStatus: null,
+      status: function (status) {
+        this.statusCode = status;
+        return this;
+      },
+      json: function (data) {
+        this.userStatus = data;
+      },
+    };
+
+    await AuthController.getUserStatus(req, res, () => {});
+
+    expect(res.statusCode).to.be.equal(200);
+    expect(res.userStatus).to.have.property("status", "I am new!");
+
+    await User.deleteOne({ _id: savedUser._id }); // cleanup
+    await mongoose.disconnect();
   });
 });
