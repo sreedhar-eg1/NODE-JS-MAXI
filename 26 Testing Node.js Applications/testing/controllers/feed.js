@@ -31,64 +31,61 @@ exports.getPosts = async (req, res, next) => {
   }
 };
 
-exports.createPost = (req, res, next) => {
-  const errors = validationResult(req);
+exports.createPost = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
 
-  if (!errors.isEmpty()) {
-    const error = new Error("Validation failed, entered data is incorrect.");
-    error.statusCode = 422;
-    throw error;
-  }
+    if (!errors.isEmpty()) {
+      const error = new Error("Validation failed, entered data is incorrect.");
+      error.statusCode = 422;
+      throw error;
+    }
 
-  if (!req.file) {
-    const error = new Error("No image provided.");
-    error.statusCode = 422;
-    throw error;
-  }
+    if (!req.file) {
+      const error = new Error("No image provided.");
+      error.statusCode = 422;
+      throw error;
+    }
 
-  const imageUrl = req.file.path.replace(/\\/g, "/"); // store a URL-safe path
-  const title = req.body.title;
-  const content = req.body.content;
+    const imageUrl = req.file.path.replace(/\\/g, "/");
+    const title = req.body.title;
+    const content = req.body.content;
+    const userId = req.userId;
 
-  const userId = req.userId; // get the userId from the request object (set by the isAuth middleware)
-
-  const post = new Post({
-    title,
-    content,
-    imageUrl: imageUrl,
-    creator: userId,
-  });
-
-  let creator;
-  let savedPost;
-
-  post
-    .save()
-    .then((result) => {
-      savedPost = result;
-      return User.findById(userId);
-    })
-    .then((user) => {
-      creator = user;
-      user.posts.push(savedPost);
-      return user.save();
-    })
-    .then((result) => {
-      res.status(201).json({
-        message: "Post created successfully!",
-        post: {
-          ...savedPost._doc,
-          creator: { _id: creator._id, name: creator.name },
-        },
-      });
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-
-      next(err);
+    const post = new Post({
+      title,
+      content,
+      imageUrl,
+      creator: userId,
     });
+
+    const savedPost = await post.save();
+    const user = await User.findById(userId);
+
+    if (!user) {
+      const error = new Error("Could not find user.");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    user.posts.push(savedPost);
+    await user.save();
+
+    res.status(201).json({
+      message: "Post created successfully!",
+      post: {
+        ...savedPost._doc,
+        creator: { _id: user._id, name: user.name },
+      },
+    });
+
+    return user;
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
 exports.getPost = (req, res, next) => {
