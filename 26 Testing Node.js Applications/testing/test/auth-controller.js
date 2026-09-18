@@ -6,7 +6,7 @@ const User = require("../models/user");
 
 const AuthController = require("../controllers/auth");
 
-describe("Auth Controller - Login", function () {
+describe("Auth Controller", function () {
   let savedUser;
 
   before(async function () {
