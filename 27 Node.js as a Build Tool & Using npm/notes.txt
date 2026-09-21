@@ -1,0 +1,6 @@
+when we install Node JS, we get two things along with it
+    Node JS and NPM
+
+    Node JS -> Which will execute our code
+                Interact with files
+    NPM -> Manage packages, Run scripts
