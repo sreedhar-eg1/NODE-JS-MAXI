@@ -1,0 +1,8 @@
+ES Modules
+    Import/Export syntax for the modern javascript in the browser
+
+    Export
+        export const doSomething = () => {....}
+
+    Import
+        import {doSomething} from './someFile'
