@@ -1,0 +1,14 @@
+NPM
+    Node package manager
+
+    It is a cli, we use npm in the command line
+
+    If we have some functionality, which need to be shared or used in some application
+    Then we need to make that functionality a package using npm
+
+    To do this, we have npm repository, where we can hoist our packages
+        It is a free repository
+
+npm repository
+    This is the place where all the packages have been hoisted
+    From here we can install the package that we need in our application
