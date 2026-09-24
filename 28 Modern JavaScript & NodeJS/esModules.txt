@@ -6,3 +6,13 @@ ES Modules
 
     Import
         import {doSomething} from './someFile'
+
+To use ES module in our project, we need to enable it first
+
+    One way to maje use of es module is to rename the file extention from .js to .mjs
+        Ex: app.js => app.mjs
+        All the file
+
+    Another way is to keep .js file extension, but in package.json file we need to add type field and set it to module
+        "type": "module"
+        While using this approach, we need to add the extension while importing
