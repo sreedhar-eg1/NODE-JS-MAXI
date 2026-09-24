@@ -16,3 +16,10 @@ To use ES module in our project, we need to enable it first
     Another way is to keep .js file extension, but in package.json file we need to add type field and set it to module
         "type": "module"
         While using this approach, we need to add the extension while importing
+
+With modern ES syntax global variable wont work like as it does in Common JS module
+    because there is no globals with this syntax
+    But we have workaround for this issue (Check ES Module folder to find the workaround)
+
+    const _fileName = fileURLToPath(import.meta.url); // Will give path to the current file
+    const __dirname = dirname(_fileName); // gives path to the current folder
