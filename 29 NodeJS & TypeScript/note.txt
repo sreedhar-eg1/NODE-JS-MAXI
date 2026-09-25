@@ -1,0 +1,7 @@
+We can add configuration file by running below command
+    tsc --init
+
+    which generate tsc-config file with some default configuration
+        We can customize the configuration based on our requirement
+
+    When we have tsc config file, if we run tsc then all the file with ts file extension will be compiled
