@@ -39,10 +39,6 @@ npm-pack
 .env.production.local
 .env.local
 
-# TypeScript files
-*.ts
-!*.d.ts
-
 # Compiled output
 /lib
 /es
