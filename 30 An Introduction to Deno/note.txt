@@ -1,0 +1,12 @@
+What is deno
+    Deno is javascript runtime based on chromes v8 javascript engine
+
+    Allows you to run javascript outside of the browser
+
+On difference between deno and node js is deno supports both javascript and typescript
+    But we can use typescript with node js also, but here there is a catch first typescript code need to be compiled to 
+    javascript
+
+Deno supports URL imports and modern javacript features like (e.g promises)
+
+Deno is secure by default and requires explicit execution permisiions
