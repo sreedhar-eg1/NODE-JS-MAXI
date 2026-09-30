@@ -10,3 +10,13 @@ On difference between deno and node js is deno supports both javascript and type
 Deno supports URL imports and modern javacript features like (e.g promises)
 
 Deno is secure by default and requires explicit execution permisiions
+
+Some actions requires permission in Deno
+    we can allow permission by setting a flag while running the application
+        deno run --allow-write app.ts
+
+            --allow-write => This flag allows us to write to a file
+            --allow-read => This flag allows us to read from a file
+
+            We can configure this flag too
+                --allow-write=message.txt => allows to write to message.txt file
