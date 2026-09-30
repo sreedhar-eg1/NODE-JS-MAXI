@@ -1,0 +1,1 @@
+This is a sample text - which need to be stored in a file
