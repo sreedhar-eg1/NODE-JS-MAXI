@@ -4,9 +4,10 @@ import todoRouter from "./routes/todo.ts";
 
 const app = new Application();
 
-// app.use((ctx) => {
-//   ctx.response.body = "Hello from Oak!";
-// });
+app.use(async (_, next) => {
+  console.log("Some middleware");
+  await next();
+});
 
 app.use(todoRouter.routes());
 app.use(todoRouter.allowedMethods());
