@@ -1,5 +1,6 @@
 {
   "imports": {
-    "@oak/oak": "jsr:@oak/oak@^17.2.0"
+    "@oak/oak": "jsr:@oak/oak@^17.2.0",
+    "mongodb": "npm:mongodb@^7.7.0"
   }
 }

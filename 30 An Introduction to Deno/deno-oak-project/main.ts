@@ -1,8 +1,13 @@
 import { Application } from "@oak/oak";
 
+import { connectToDatabase } from "./helpers/db.ts";
+
 import todoRouter from "./routes/todo.ts";
 
 const app = new Application();
+
+await connectToDatabase();
+
 
 app.use(async (_, next) => {
   console.log("Some middleware");
